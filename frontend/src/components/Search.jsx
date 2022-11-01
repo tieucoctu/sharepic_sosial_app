@@ -6,13 +6,14 @@ import { feedQuery, searchQuery } from "../utils/data";
 import Loading from "./Loading";
 
 const Search = ({ searchTerm }) => {
+  console.log("searchTerm :", searchTerm);
   const [pins, setPins] = useState();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (searchTerm !== "") {
       setLoading(true);
-      const query = searchQuery(searchTerm.toLowerCase());
+      const query = searchQuery(searchTerm?.toLowerCase());
       client.fetch(query).then((data) => {
         setPins(data);
         setLoading(false);
