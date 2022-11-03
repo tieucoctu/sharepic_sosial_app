@@ -10,7 +10,7 @@ function Navbar({ searchTerm, setSearchTerm, user }) {
     <div className="flex gap-2 md:gap-5 w-full mt-5 pb-7 ">
       <Link
         to="create-pin"
-        className="bg-black text-white rounded-full w-12 md:w-14 flex justify-center items-center"
+        className="bg-black text-white rounded-xl w-12 md:w-14 flex justify-center items-center"
       >
         <IoMdAdd />
       </Link>

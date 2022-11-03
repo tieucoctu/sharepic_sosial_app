@@ -5,6 +5,7 @@ import { urlFor, client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
+
 function Pin({ pin }) {
   const navigate = useNavigate();
   const { postedBy, image, _id, destination } = pin;
@@ -66,7 +67,7 @@ function Pin({ pin }) {
         />
         {postHovered && (
           <div
-            className="absolute top-0 w-full h-full flex flex-col justify-between p-1 pr-2 pt-2 pb-2 z-50"
+            className="absolute top-0 w-full h-full flex flex-col justify-between p-1 pr-2 py-2 z-50"
             style={{ height: "100%" }}
           >
             <div className="flex items-center justify-between">
@@ -75,7 +76,7 @@ function Pin({ pin }) {
                   href={`${image?.asset?.url}?dl=`}
                   download
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-white w-9 h-9 p-2 rounded-full flex items-center justify-center text-dark text-xl opacity-75 hover:opacity-100 hover:shadow-md outline-none "
+                  className="bg-white w-9 h-9 p-1 rounded-full flex items-center justify-center text-dark text-xl opacity-75 hover:opacity-100 hover:shadow-md outline-none "
                 >
                   <MdDownloadForOffline />
                 </a>
@@ -83,7 +84,7 @@ function Pin({ pin }) {
               {alreadySaved?.length !== 0 ? (
                 <button
                   type="button"
-                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
+                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-1 text-base rounded-3xl hover:shadow-md outline-none text-sm"
                 >
                   {pin?.save?.length} Saved
                 </button>
@@ -94,7 +95,7 @@ function Pin({ pin }) {
                     e.stopPropagation();
                     savePin(_id);
                   }}
-                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
+                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-1 rounded-3xl hover:shadow-md outline-none text-sm"
                 >
                   {pin?.save?.length} {savingPost ? "Saving" : "Save"}
                 </button>
@@ -105,7 +106,7 @@ function Pin({ pin }) {
                 <a
                   href={destination}
                   target="_blank"
-                  className="bg-white flex items-center gap-2 text-black font-bold p-2 pl-4 pr-4 rounded-full opacity-70 hover:opacity-100 hover:shadow-md"
+                  className="bg-white flex items-center gap-2 text-black font-bold py-1 px-2 rounded-full opacity-70 hover:opacity-100 hover:shadow-md text-sm"
                   rel="noreferrer"
                 >
                   {" "}

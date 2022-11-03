@@ -7,7 +7,11 @@ import { client, urlFor } from "../client";
 import MasonryLayout from "./MasonryLayout";
 import { pinDetailMorePinQuery, pinDetailQuery } from "../utils/data";
 import Loading from "./Loading";
-
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import { AiOutlineEye } from "react-icons/ai";
 const PinDetail = ({ user }) => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
@@ -15,13 +19,13 @@ const PinDetail = ({ user }) => {
   console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
 
     if (query) {
       client.fetch(`${query}`).then((data) => {
-        console.log("data :", data);
         setPinDetail(data[0]);
         if (data[0]) {
           const query1 = pinDetailMorePinQuery(data[0]);
@@ -33,18 +37,15 @@ const PinDetail = ({ user }) => {
     }
   };
 
-  useEffect(() => {
-    fetchPinDetails();
-  }, [addingComment]);
-
   const addComment = () => {
     if (comment) {
+      console.log("comment :", comment);
       setAddingComment(true);
 
       client
         .patch(pinId)
         .setIfMissing({ comments: [] })
-        .insert("after", "comments[1]", [
+        .insert("after", "comments[-1]", [
           {
             comment,
             _key: uuidv4(),
@@ -60,75 +61,74 @@ const PinDetail = ({ user }) => {
     }
   };
 
+  useEffect(() => {
+    fetchPinDetails();
+  }, [addingComment]);
+
   if (!pinDetail) {
     return <Loading message="Showing pin" />;
   }
 
   return (
     <>
+      <Lightbox
+        open={isOpen}
+        close={() => setIsOpen(false)}
+        slides={[
+          {
+            src: `${urlFor(pinDetail?.image).url()}`,
+          },
+        ]}
+        carousel={{ finite: true }}
+        plugins={[Zoom, Fullscreen]}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+      />
       {pinDetail && (
         <div
           className="flex xl:flex-row flex-col m-auto bg-white"
           style={{ maxWidth: "1500px", borderRadius: "32px" }}
         >
-          <div className="flex justify-center items-center md:items-start flex-initial">
-            <img
-              className="rounded-t-3xl rounded-b-lg"
-              src={pinDetail?.image && urlFor(pinDetail?.image).url()}
-              alt="user-post"
-            />
+          <div className="flex justify-center items-center md:items-start flex-initial  opacity-100 hover:opacity-80 p-4">
+            <button
+              type="button"
+              className="relative"
+              onClick={() => setIsOpen(true)}
+            >
+              <img
+                className="rounded-3xl "
+                src={pinDetail?.image && urlFor(pinDetail?.image).url()}
+                alt="user-post"
+              />
+              <AiOutlineEye className="z-50 opacity-20 hover:opacity-100 w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            </button>
           </div>
           <div className="w-full p-5 flex-1 xl:min-w-620">
             <div className="flex items-center justify-between">
+              <h1 className="text-4xl font-bold break-words mt-3">
+                {pinDetail.title}
+              </h1>
               <div className="flex gap-2 items-center">
                 <a
                   href={`${pinDetail.image.asset.url}?dl=`}
                   download
                   className="bg-secondaryColor p-2 text-xl rounded-full flex items-center justify-center text-dark opacity-75 hover:opacity-100"
                 >
-                  <MdDownloadForOffline />
+                  <MdDownloadForOffline className="w-7 h-7" />
                 </a>
               </div>
-              <a href={pinDetail.destination} target="_blank" rel="noreferrer">
-                {pinDetail.destination?.slice(8)}
-              </a>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold break-words mt-3">
-                {pinDetail.title}
-              </h1>
-              <p className="mt-3">{pinDetail.about}</p>
-            </div>
-            <Link
-              to={`/user-profile/${pinDetail?.postedBy._id}`}
-              className="flex gap-2 mt-5 items-center bg-white rounded-lg "
-            >
-              <img
-                src={pinDetail?.postedBy.image}
-                className="w-10 h-10 rounded-full"
-                alt="user-profile"
-              />
-              <p className="font-bold">{pinDetail?.postedBy.userName}</p>
-            </Link>
+
+            <p className="font-bold mt-3">
+              Action:{" "}
+              <Link to={`/user-profile/${pinDetail?.postedBy._id}`}>
+                {pinDetail?.postedBy.userName}
+              </Link>
+            </p>
+            <p className="mt-3">About: {pinDetail.about}</p>
             <h2 className="mt-5 text-2xl">Comments</h2>
-            <div className="max-h-370 overflow-y-auto">
-              {pinDetail?.comments?.map((item) => (
-                <div
-                  className="flex gap-2 mt-5 items-center bg-white rounded-lg"
-                  key={item.comment}
-                >
-                  <img
-                    src={item.postedBy?.image}
-                    className="w-10 h-10 rounded-full cursor-pointer"
-                    alt="user-profile"
-                  />
-                  <div className="flex flex-col">
-                    <p className="font-bold">{item.postedBy?.userName}</p>
-                    <p>{item.comment}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
             <div className="flex flex-wrap mt-6 gap-3">
               <Link to={`/user-profile/${user._id}`}>
                 <img
@@ -151,6 +151,27 @@ const PinDetail = ({ user }) => {
               >
                 {addingComment ? "Doing..." : "Done"}
               </button>
+            </div>
+            <div
+              className=" mt-4 overflow-y-auto"
+              style={{ maxHeight: "555px" }}
+            >
+              {pinDetail?.comments?.map((item) => (
+                <div
+                  className="flex gap-2 mt-5 items-center bg-white rounded-lg"
+                  key={item.comment}
+                >
+                  <img
+                    src={item.postedBy?.image}
+                    className="w-10 h-10 rounded-full cursor-pointer"
+                    alt="user-profile"
+                  />
+                  <div className="flex flex-col">
+                    <p className="font-bold">{item.postedBy?.userName}</p>
+                    <p>{item.comment}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
