@@ -5,17 +5,15 @@ import { urlFor, client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
+import { fetchUser } from "./fetchUser";
 
 function Pin({ pin }) {
   const navigate = useNavigate();
-  const { postedBy, image, _id, destination } = pin;
+  const { postedBy, image, _id, destination, save } = pin;
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
 
-  const user =
-    localStorage.getItem("user") !== "undefined"
-      ? JSON.parse(localStorage.getItem("user"))
-      : localStorage.clear();
+  const user = fetchUser();
 
   const deletePin = (id) => {
     client.delete(id).then(() => {
@@ -23,19 +21,19 @@ function Pin({ pin }) {
     });
   };
 
-  let alreadySaved = pin?.save?.filter(
+  let alreadySaved = !!save?.filter(
     (item) => item?.postedBy?._id === user?.googleId
-  );
+  )?.length;
 
-  alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
+  // alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
   const savePin = (id) => {
-    if (alreadySaved?.length === 0) {
+    if (!alreadySaved) {
       setSavingPost(true);
 
       client
         .patch(id)
         .setIfMissing({ save: [] })
-        .insert("after", "save[-1]", [
+        .insert("before", "save[-1]", [
           {
             _key: uuidv4(),
             userId: user?.googleId,
@@ -47,7 +45,7 @@ function Pin({ pin }) {
         ])
         .commit()
         .then(() => {
-          window.location.reload();
+          // window.location.reload();
           setSavingPost(false);
         });
     }
@@ -81,13 +79,13 @@ function Pin({ pin }) {
                   <MdDownloadForOffline />
                 </a>
               </div>
-              {alreadySaved?.length !== 0 ? (
-                <button
+              {alreadySaved ? (
+                <div
                   type="button"
-                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-1 text-base rounded-3xl hover:shadow-md outline-none text-sm"
+                  className="bg-red-500 opacity-70  text-white font-bold px-2 py-1 text-base rounded-3xl hover:shadow-md outline-none text-sm"
                 >
-                  {pin?.save?.length} Saved
-                </button>
+                  Đã lưu
+                </div>
               ) : (
                 <button
                   type="button"
@@ -97,7 +95,7 @@ function Pin({ pin }) {
                   }}
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-1 rounded-3xl hover:shadow-md outline-none text-sm"
                 >
-                  {pin?.save?.length} {savingPost ? "Saving" : "Save"}
+                  {savingPost ? "Đang lưu" : "Lưu"}
                 </button>
               )}
             </div>

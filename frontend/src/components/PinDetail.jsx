@@ -16,7 +16,7 @@ const PinDetail = ({ user }) => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
-  console.log("pinDetail :", pinDetail);
+  // console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);

@@ -11,6 +11,7 @@ import {
 import { client } from "../client";
 import MasonryLayout from "./MasonryLayout";
 import Loading from "./Loading";
+import { STATE_PIN } from "../utils/constants";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
@@ -20,8 +21,8 @@ const notActiveBtnStyles =
 const UserProfile = () => {
   const [user, setUser] = useState();
   const [pins, setPins] = useState();
-  const [text, setText] = useState("Created");
-  const [activeBtn, setActiveBtn] = useState("created");
+  const [text, setText] = useState(STATE_PIN.created);
+  const [activeBtn, setActiveBtn] = useState(STATE_PIN.created);
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -38,16 +39,17 @@ const UserProfile = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (text === "Created") {
+    if (text === STATE_PIN.created) {
       const createdPinsQuery = userCreatedPinsQuery(userId);
 
       client.fetch(createdPinsQuery).then((data) => {
         setPins(data);
       });
-    } else if (text === "Saved") {
+    } else if (text === STATE_PIN.saved) {
       const savedPinsQuery = userSavedPinsQuery(userId);
 
       client.fetch(savedPinsQuery).then((data) => {
+        console.log("data :", data);
         setPins(data);
       });
     }
@@ -67,12 +69,7 @@ const UserProfile = () => {
         <div className="relative flex flex-col mb-7">
           <div className="flex flex-col justify-center items-center">
             <img
-              className=" w-full h-370 2xl:h-510 shadow-lg object-cover"
-              src="https://source.unsplash.com/1600x900/?nature,photography,technology"
-              alt="user-pic"
-            />
-            <img
-              className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
+              className="rounded-full w-20 h-20 mt-8 shadow-xl object-cover"
               src={user.image}
               alt="user-pic"
             />
@@ -80,7 +77,7 @@ const UserProfile = () => {
           <h1 className="font-bold text-3xl text-center mt-3">
             {user.userName}
           </h1>
-          <div className="absolute top-0 z-1 right-0 p-2">
+          <div className="absolute top-0 z-1 right-2 top-2 p-2">
             {userId === User.googleId && (
               <GoogleLogout
                 clientId={`${process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN}`}
@@ -105,35 +102,39 @@ const UserProfile = () => {
             type="button"
             onClick={(e) => {
               setText(e.target.textContent);
-              setActiveBtn("created");
+              setActiveBtn(STATE_PIN.created);
             }}
             className={`${
-              activeBtn === "created" ? activeBtnStyles : notActiveBtnStyles
+              activeBtn === STATE_PIN.created
+                ? activeBtnStyles
+                : notActiveBtnStyles
             }`}
           >
-            Created
+            Đã tạo
           </button>
           <button
             type="button"
             onClick={(e) => {
               setText(e.target.textContent);
-              setActiveBtn("saved");
+              setActiveBtn(STATE_PIN.saved);
             }}
             className={`${
-              activeBtn === "saved" ? activeBtnStyles : notActiveBtnStyles
+              activeBtn === STATE_PIN.saved
+                ? activeBtnStyles
+                : notActiveBtnStyles
             }`}
           >
-            Saved
+            Đã lưu
           </button>
         </div>
 
         {pins?.length ? (
-          <div className="px-2">
+          <div className="px-4">
             <MasonryLayout pins={pins} />
           </div>
         ) : (
           <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
-            No Pins Found!
+            Không tìm thấy ghim nào!
           </div>
         )}
       </div>

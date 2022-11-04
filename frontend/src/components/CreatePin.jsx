@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
-
+import Select from "react-select";
 import { categories } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
@@ -173,24 +173,15 @@ const CreatePin = ({ user }) => {
               <p className="mb-2 font-semibold text:lg sm:text-xl">
                 Choose Pin Category
               </p>
-              <select
-                onChange={(e) => {
-                  setCategory(e.target.value);
+              <Select
+                onChange={(value) => {
+                  console.log("value :", value);
+                  setCategory(value);
                 }}
+                isMulti
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-              >
-                <option value="others" className="sm:text-bg bg-white">
-                  Select Category
-                </option>
-                {categories.map((item) => (
-                  <option
-                    className="text-base border-0 outline-none capitalize bg-white text-black "
-                    value={item.name}
-                  >
-                    {item.name}
-                  </option>
-                ))}
-              </select>
+                options={categories}
+              />
             </div>
             <div className="flex justify-end items-end mt-5">
               <button
