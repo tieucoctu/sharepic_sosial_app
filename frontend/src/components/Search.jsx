@@ -6,7 +6,6 @@ import { feedQuery, searchQuery } from "../utils/data";
 import Loading from "./Loading";
 
 const Search = ({ searchTerm }) => {
-  console.log("searchTerm :", searchTerm);
   const [pins, setPins] = useState();
   const [loading, setLoading] = useState(false);
 

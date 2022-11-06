@@ -39,7 +39,6 @@ const PinDetail = ({ user }) => {
 
   const addComment = () => {
     if (comment) {
-      console.log("comment :", comment);
       setAddingComment(true);
 
       client
@@ -66,7 +65,7 @@ const PinDetail = ({ user }) => {
   }, [addingComment]);
 
   if (!pinDetail) {
-    return <Loading message="Showing pin" />;
+    return <Loading />;
   }
 
   return (

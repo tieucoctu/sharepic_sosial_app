@@ -14,7 +14,7 @@ export const categories = [
   },
   {
     value: "websites",
-    label: "Trang Web",
+    label: "Websites",
   },
   {
     value: "photo",
@@ -47,6 +47,30 @@ export const categories = [
   {
     value: "dogs",
     label: "Chó",
+  },
+  {
+    value: "flowers",
+    label: "Hoa",
+  },
+  {
+    value: "women",
+    label: "Phụ nữ",
+  },
+  {
+    value: "man",
+    label: "Đàn ông",
+  },
+  {
+    value: "cartoons",
+    label: "Hoạt hình",
+  },
+  {
+    value: "city",
+    label: "Thành phố",
+  },
+  {
+    value: "love",
+    label: "Tình yêu",
   },
   {
     value: "others",

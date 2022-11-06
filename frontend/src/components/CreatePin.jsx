@@ -85,7 +85,7 @@ const CreatePin = ({ user }) => {
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       {fields && (
         <p className="text-red-500 mb-5 text-xl transition-all duration-150 ease-in ">
-          Please add all fields.
+          Vui lòng nhập tất cả các trường.
         </p>
       )}
       <div className=" flex lg:flex-row flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5  w-full">
@@ -105,8 +105,8 @@ const CreatePin = ({ user }) => {
                   </div>
 
                   <p className="mt-32 text-gray-400">
-                    Recommendation: Use high-quality JPG, JPEG, SVG, PNG, GIF or
-                    TIFF less than 20MB
+                    Khuyến nghị: Sử dụng JPG, JPEG, SVG, PNG, GIF hoặc TIFF chất
+                    lượng dưới 20MB
                   </p>
                 </div>
                 <input
@@ -140,7 +140,7 @@ const CreatePin = ({ user }) => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Add your title"
+            placeholder="Thêm tiêu đề"
             className="outline-none text-2xl sm:text-3xl font-bold border-b-2 border-gray-200 p-2"
           />
           {user && (
@@ -157,25 +157,24 @@ const CreatePin = ({ user }) => {
             type="text"
             value={about}
             onChange={(e) => setAbout(e.target.value)}
-            placeholder="Tell everyone what your Pin is about"
+            placeholder="Cho mọi người biết nội dung Ghim của bạn"
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
           />
           <input
             type="url"
             vlaue={destination}
             onChange={(e) => setDestination(e.target.value)}
-            placeholder="Add a destination link"
+            placeholder="Thêm một liên kết"
             className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
           />
 
           <div className="flex flex-col">
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">
-                Choose Pin Category
+                Chọn danh mục ghim
               </p>
               <Select
                 onChange={(value) => {
-                  console.log("value :", value);
                   setCategory(value);
                 }}
                 isMulti
@@ -189,7 +188,7 @@ const CreatePin = ({ user }) => {
                 onClick={savePin}
                 className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
               >
-                Save Pin
+                Lưu ghim
               </button>
             </div>
           </div>

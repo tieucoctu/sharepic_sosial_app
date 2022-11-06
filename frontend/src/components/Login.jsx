@@ -19,14 +19,12 @@ function Login() {
   const responseGoogle = (response) => {
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl } = response?.profileObj;
-    console.log("response?.profileObj :", response?.profileObj);
     const doc = {
       _id: googleId,
       _type: "user",
       userName: name,
       image: imageUrl,
     };
-    console.log("doc :", doc);
     client.createIfNotExists(doc).then(() => {
       navigate("/", { replace: true });
     });
@@ -58,7 +56,7 @@ function Login() {
                   onClick={renderProps.onClick}
                   disabled={renderProps.disabled}
                 >
-                  <FcGoogle className="mr-4" /> Sign in with Google
+                  <FcGoogle className="mr-4" /> Đăng nhập với Google
                 </button>
               )}
               onSuccess={responseGoogle}
