@@ -17,6 +17,7 @@ function Feed() {
 
       client.fetch(query).then((data) => {
         setPins(data);
+        setLoading(false);
       });
     } else {
       client.fetch(feedQuery).then((data) => {

@@ -30,7 +30,7 @@ function Sidebar({ closeToggle }) {
           </h3>
           <div
             className="mx-4 ml-6 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 overflow-y-scroll scrollbar-rounded-full scrollbar-rounded-full"
-            style={{ maxHeight: "470px" }}
+            style={{ maxHeight: "620px" }}
           >
             {categories.map((category) => (
               <NavLink

@@ -11,7 +11,7 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import { AiOutlineEye } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineFullscreen } from "react-icons/ai";
 const PinDetail = ({ user }) => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
@@ -90,19 +90,21 @@ const PinDetail = ({ user }) => {
           className="flex xl:flex-row flex-col m-auto bg-white"
           style={{ maxWidth: "1500px", borderRadius: "32px" }}
         >
-          <div className="flex justify-center items-center md:items-start flex-initial  opacity-100 hover:opacity-80 p-4">
-            <button
-              type="button"
-              className="relative"
-              onClick={() => setIsOpen(true)}
-            >
+          <div className="flex justify-center items-center md:items-start flex-initial p-4 ">
+            <div className="relative">
+              <button
+                type="button"
+                className="absolute bottom-3 right-3"
+                onClick={() => setIsOpen(true)}
+              >
+                <AiOutlineFullscreen className="z-50 opacity-70 hover:opacity-100 w-9 h-9  bg-white rounded-xl p-1" />
+              </button>
               <img
                 className="rounded-3xl "
                 src={pinDetail?.image && urlFor(pinDetail?.image).url()}
                 alt="user-post"
               />
-              <AiOutlineEye className="z-50 opacity-20 hover:opacity-100 w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-            </button>
+            </div>
           </div>
           <div className="w-full p-5 flex-1 xl:min-w-620">
             <div className="flex items-center justify-between">
@@ -121,13 +123,13 @@ const PinDetail = ({ user }) => {
             </div>
 
             <p className="font-bold mt-3">
-              Action:{" "}
+              Tác giả:{" "}
               <Link to={`/user-profile/${pinDetail?.postedBy._id}`}>
                 {pinDetail?.postedBy.userName}
               </Link>
             </p>
-            <p className="mt-3">About: {pinDetail.about}</p>
-            <h2 className="mt-5 text-2xl">Comments</h2>
+            <p className="mt-3">Mô tả: {pinDetail.about}</p>
+            <h2 className="mt-5 text-2xl">Nhận xét: </h2>
             <div className="flex flex-wrap mt-6 gap-3">
               <Link to={`/user-profile/${user._id}`}>
                 <img
@@ -148,7 +150,7 @@ const PinDetail = ({ user }) => {
                 className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
                 onClick={addComment}
               >
-                {addingComment ? "Doing..." : "Done"}
+                {addingComment ? "Đang gứi..." : "Gửi"}
               </button>
             </div>
             <div

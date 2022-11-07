@@ -64,6 +64,7 @@ export const categories = [
     value: "cartoons",
     label: "Hoạt hình",
   },
+  { value: "music", label: "Âm nhạc" },
   {
     value: "city",
     label: "Thành phố",
