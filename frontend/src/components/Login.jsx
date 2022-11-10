@@ -17,8 +17,10 @@ function Login() {
   }, []);
 
   const responseGoogle = (response) => {
+    console.log("responseGoogle :", responseGoogle);
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl } = response?.profileObj;
+    console.log("name :", name);
     const doc = {
       _id: googleId,
       _type: "user",
@@ -26,6 +28,7 @@ function Login() {
       image: imageUrl,
     };
     client.createIfNotExists(doc).then(() => {
+      console.log("doc :", doc);
       navigate("/", { replace: true });
     });
   };

@@ -33,7 +33,7 @@ export const categories = [
     label: "Tranh vẽ",
   },
   {
-    value: "travel",
+    value: "",
     label: "Du lịch",
   },
   {

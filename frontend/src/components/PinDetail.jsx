@@ -5,28 +5,37 @@ import { v4 as uuidv4 } from "uuid";
 
 import { client, urlFor } from "../client";
 import MasonryLayout from "./MasonryLayout";
-import { pinDetailMorePinQuery, pinDetailQuery } from "../utils/data";
+import {
+  categories,
+  pinDetailMorePinQuery,
+  pinDetailQuery,
+} from "../utils/data";
 import Loading from "./Loading";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import { AiOutlineEye, AiOutlineFullscreen } from "react-icons/ai";
+import { AiOutlineFullscreen } from "react-icons/ai";
+import { FiMoreVertical } from "react-icons/fi";
+import RemoveCmt from "./RemoveCmt";
 const PinDetail = ({ user }) => {
+  console.log("user :", user);
   const { pinId } = useParams();
+  console.log("pinId :", pinId);
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
-  // console.log("pinDetail :", pinDetail);
+  console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
-
     if (query) {
       client.fetch(`${query}`).then((data) => {
         setPinDetail(data[0]);
+        console.log("pinDetail :", pinDetail);
+
         if (data[0]) {
           const query1 = pinDetailMorePinQuery(data[0]);
           client.fetch(query1).then((res) => {
@@ -37,11 +46,11 @@ const PinDetail = ({ user }) => {
     }
   };
 
-  const addComment = () => {
+  const addComment = async () => {
     if (comment) {
       setAddingComment(true);
 
-      client
+      await client
         .patch(pinId)
         .setIfMissing({ comments: [] })
         .insert("after", "comments[-1]", [
@@ -121,7 +130,6 @@ const PinDetail = ({ user }) => {
                 </a>
               </div>
             </div>
-
             <p className="font-bold mt-3">
               Tác giả:{" "}
               <Link to={`/user-profile/${pinDetail?.postedBy._id}`}>
@@ -129,6 +137,24 @@ const PinDetail = ({ user }) => {
               </Link>
             </p>
             <p className="mt-3">Mô tả: {pinDetail.about}</p>
+            <p className="mt-3">
+              phân loại:
+              {pinDetail?.category &&
+                pinDetail?.category.map((detail) =>
+                  categories.map((ctg) => {
+                    if (ctg.value === detail)
+                      return (
+                        <Link
+                          className=" text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium"
+                          to={`/category/${detail}`}
+                        >
+                          {" "}
+                          {`${ctg.label} `}
+                        </Link>
+                      );
+                  })
+                )}
+            </p>
             <h2 className="mt-5 text-2xl">Nhận xét: </h2>
             <div className="flex flex-wrap mt-6 gap-3">
               <Link to={`/user-profile/${user._id}`}>
@@ -157,22 +183,26 @@ const PinDetail = ({ user }) => {
               className=" mt-4 overflow-y-auto"
               style={{ maxHeight: "555px" }}
             >
-              {pinDetail?.comments?.map((item) => (
-                <div
-                  className="flex gap-2 mt-5 items-center bg-white rounded-lg"
-                  key={item.comment}
-                >
-                  <img
-                    src={item.postedBy?.image}
-                    className="w-10 h-10 rounded-full cursor-pointer"
-                    alt="user-profile"
-                  />
-                  <div className="flex flex-col">
-                    <p className="font-bold">{item.postedBy?.userName}</p>
-                    <p>{item.comment}</p>
+              {pinDetail?.comments?.map((item, index) => {
+                return (
+                  <div
+                    className="flex gap-2 mb-6 items-center bg-white rounded-full relative py-1 px-2  divide-y divide-gray-100 shadow dark:bg-gray-700 "
+                    key={index}
+                  >
+                    <img
+                      src={item.postedBy?.image}
+                      className="w-10 h-10 rounded-full cursor-pointer"
+                      alt="user-profile"
+                    />
+                    <div className="flex flex-col">
+                      <p className="font-bold">{item.postedBy?.userName}</p>
+                      <p>{item.comment}</p>
+                    </div>
+
+                    <RemoveCmt idKey={item?._key} />
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

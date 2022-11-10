@@ -15,10 +15,8 @@ function Pin({ pin }) {
 
   const user = fetchUser();
 
-  const deletePin = (id) => {
-    client.delete(id).then(() => {
-      window.location.reload();
-    });
+  const deletePin = async (id) => {
+    await client.delete(id);
   };
 
   let alreadySaved = !!save?.filter(
@@ -33,7 +31,7 @@ function Pin({ pin }) {
       client
         .patch(id)
         .setIfMissing({ save: [] })
-        .insert("before", "save[-1]", [
+        .insert("after", "save[-1]", [
           {
             _key: uuidv4(),
             userId: user?.googleId,
@@ -45,7 +43,7 @@ function Pin({ pin }) {
         ])
         .commit()
         .then(() => {
-          // window.location.reload();
+          window.location.reload();
           setSavingPost(false);
         });
     }

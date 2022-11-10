@@ -48,7 +48,11 @@ const CreatePin = ({ user }) => {
       setWrongImageType(true);
     }
   };
-
+  const handleOnchange = (values) => {
+    const categories = [];
+    values.map((value) => categories.push(value.value));
+    setCategory(categories);
+  };
   const savePin = () => {
     if (title && about && destination && imageAsset?._id && category) {
       const doc = {
@@ -174,9 +178,7 @@ const CreatePin = ({ user }) => {
                 Chọn danh mục ghim
               </p>
               <Select
-                onChange={(value) => {
-                  setCategory(value);
-                }}
+                onChange={(values) => handleOnchange(values)}
                 isMulti
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
                 options={categories}
