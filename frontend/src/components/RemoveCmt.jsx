@@ -9,11 +9,15 @@ export default function RemoveCmt({ idKey }) {
   const removeComment = () => {
     client
       .patch(pinId)
-      .unset([`comments[_key == ${idKey}]`])
+      .unset([`comments[${idKey}]`])
       .commit()
-      .then(() => {
+      .then((result) => {
         setIsToggle(!isToggle);
+        console.log("deleted imageAsset", result);
       });
+    // client.delete(idKey).then((result) => {
+    //   console.log("deleted imageAsset", result);
+    // });
   };
   return (
     <div>

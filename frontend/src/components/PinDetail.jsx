@@ -16,7 +16,7 @@ import "yet-another-react-lightbox/styles.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { AiOutlineFullscreen } from "react-icons/ai";
-import { FiMoreVertical } from "react-icons/fi";
+import Cookies from "js-cookie";
 import RemoveCmt from "./RemoveCmt";
 const PinDetail = ({ user }) => {
   console.log("user :", user);
@@ -24,7 +24,6 @@ const PinDetail = ({ user }) => {
   console.log("pinId :", pinId);
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
-  console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -199,7 +198,11 @@ const PinDetail = ({ user }) => {
                       <p>{item.comment}</p>
                     </div>
 
-                    <RemoveCmt idKey={item?._key} />
+                    {Cookies?.get("googleId") === item?.postedBy?._id ? (
+                      <RemoveCmt idKey={index} />
+                    ) : (
+                      ""
+                    )}
                   </div>
                 );
               })}

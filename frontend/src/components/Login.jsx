@@ -6,6 +6,7 @@ import shareVideo from "../assets/share.mp4";
 import { client } from "../client";
 import { gapi } from "gapi-script";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 export const clientId = process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN;
 
 function Login() {
@@ -16,8 +17,8 @@ function Login() {
     });
   }, []);
 
+  console.log("localStorage :", localStorage);
   const responseGoogle = (response) => {
-    console.log("responseGoogle :", responseGoogle);
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl } = response?.profileObj;
     console.log("name :", name);
@@ -27,8 +28,8 @@ function Login() {
       userName: name,
       image: imageUrl,
     };
+    Cookies.set("googleId", googleId);
     client.createIfNotExists(doc).then(() => {
-      console.log("doc :", doc);
       navigate("/", { replace: true });
     });
   };

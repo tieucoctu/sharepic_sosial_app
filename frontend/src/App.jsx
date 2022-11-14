@@ -5,6 +5,7 @@ import Home from "./Pages/Home";
 import { useEffect } from "react";
 function App() {
   const navigate = useNavigate();
+  console.log("localStorage :", localStorage);
 
   useEffect(() => {
     const User =
