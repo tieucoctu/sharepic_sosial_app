@@ -8,9 +8,10 @@ import pin from "./pin";
 import save from "./save";
 import postedBy from "./postedBy";
 import comment from "./comment";
+import like from "./like";
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
   name: "default",
-  types: schemaTypes.concat([user, pin, comment, postedBy, save]),
+  types: schemaTypes.concat([user, pin, comment, postedBy, save, like]),
 });

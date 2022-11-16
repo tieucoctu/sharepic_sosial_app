@@ -16,25 +16,24 @@ import "yet-another-react-lightbox/styles.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { AiOutlineFullscreen } from "react-icons/ai";
-import Cookies from "js-cookie";
 import RemoveCmt from "./RemoveCmt";
+import Like from "./Like";
+import { useDispatch, useSelector } from "react-redux";
+import { setUpdate } from "../app/constant/common";
 const PinDetail = ({ user }) => {
-  console.log("user :", user);
   const { pinId } = useParams();
-  console.log("pinId :", pinId);
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
+  const { update } = useSelector((state) => state.common);
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
     if (query) {
       client.fetch(`${query}`).then((data) => {
         setPinDetail(data[0]);
-        console.log("pinDetail :", pinDetail);
-
         if (data[0]) {
           const query1 = pinDetailMorePinQuery(data[0]);
           client.fetch(query1).then((res) => {
@@ -48,7 +47,6 @@ const PinDetail = ({ user }) => {
   const addComment = async () => {
     if (comment) {
       setAddingComment(true);
-
       await client
         .patch(pinId)
         .setIfMissing({ comments: [] })
@@ -61,21 +59,23 @@ const PinDetail = ({ user }) => {
         ])
         .commit()
         .then(() => {
+          console.log("updated");
           fetchPinDetails();
           setComment("");
           setAddingComment(false);
+          dispatch(setUpdate());
         });
     }
   };
 
   useEffect(() => {
     fetchPinDetails();
-  }, [addingComment]);
-
+  }, [update]);
   if (!pinDetail) {
     return <Loading />;
   }
-
+  console.log("", pinDetail?.like.length);
+  console.log("pinDetail :", pinDetail);
   return (
     <>
       <Lightbox
@@ -98,7 +98,7 @@ const PinDetail = ({ user }) => {
           className="flex xl:flex-row flex-col m-auto bg-white"
           style={{ maxWidth: "1500px", borderRadius: "32px" }}
         >
-          <div className="flex justify-center items-center md:items-start flex-initial p-4 ">
+          <div className="flex justify-center items-center md:items-start flex-initial p-4 flex-col">
             <div className="relative">
               <button
                 type="button"
@@ -107,12 +107,15 @@ const PinDetail = ({ user }) => {
               >
                 <AiOutlineFullscreen className="z-50 opacity-70 hover:opacity-100 w-9 h-9  bg-white rounded-xl p-1" />
               </button>
-              <img
-                className="rounded-3xl "
-                src={pinDetail?.image && urlFor(pinDetail?.image).url()}
-                alt="user-post"
-              />
+              <Like pinDetail={pinDetail}>
+                <img
+                  className="rounded-3xl "
+                  src={pinDetail?.image && urlFor(pinDetail?.image).url()}
+                  alt="user-post"
+                />
+              </Like>
             </div>
+            <p className="ml-3">{pinDetail?.like.length} lượt thích</p>
           </div>
           <div className="w-full p-5 flex-1 xl:min-w-620">
             <div className="flex items-center justify-between">
@@ -198,7 +201,7 @@ const PinDetail = ({ user }) => {
                       <p>{item.comment}</p>
                     </div>
 
-                    {Cookies?.get("googleId") === item?.postedBy?._id ? (
+                    {user?._id === item?.postedBy?._id ? (
                       <RemoveCmt idKey={index} />
                     ) : (
                       ""

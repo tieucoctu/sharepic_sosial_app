@@ -17,11 +17,9 @@ function Login() {
     });
   }, []);
 
-  console.log("localStorage :", localStorage);
   const responseGoogle = (response) => {
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl } = response?.profileObj;
-    console.log("name :", name);
     const doc = {
       _id: googleId,
       _type: "user",
@@ -70,12 +68,6 @@ function Login() {
           </div>
         </div>
       </div>
-
-      {/* {user ? (
-          <div>login</div>
-        ) : (
-          
-        )} */}
     </div>
   );
 }

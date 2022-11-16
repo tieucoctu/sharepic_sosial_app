@@ -54,5 +54,11 @@ export default {
       type: "array",
       of: [{ type: "comment" }],
     },
+    {
+      name: "like",
+      title: "Like",
+      type: "array",
+      of: [{ type: "like" }],
+    },
   ],
 };

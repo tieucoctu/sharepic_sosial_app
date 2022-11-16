@@ -134,7 +134,13 @@ export const pinDetailQuery = (pinId) => {
         userName,
         image
       },
-    }
+    },like[]{
+      postedBy->{
+        _id,
+        userName,
+        image
+      },
+    },
   }`;
   return query;
 };

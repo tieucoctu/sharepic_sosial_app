@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { setUpdate } from "../app/constant/common";
 import { client } from "../client";
 
 export default function RemoveCmt({ idKey }) {
   const [isToggle, setIsToggle] = useState(false);
   const { pinId } = useParams();
-  const removeComment = () => {
-    client
+  const dispatch = useDispatch();
+  const removeComment = async () => {
+    await client
       .patch(pinId)
       .unset([`comments[${idKey}]`])
       .commit()
       .then((result) => {
         setIsToggle(!isToggle);
         console.log("deleted imageAsset", result);
+        dispatch(setUpdate());
       });
-    // client.delete(idKey).then((result) => {
-    //   console.log("deleted imageAsset", result);
-    // });
   };
   return (
     <div>
