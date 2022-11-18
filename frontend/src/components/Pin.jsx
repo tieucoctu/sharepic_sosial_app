@@ -25,7 +25,6 @@ function Pin({ pin }) {
 
   // alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
   const savePin = (id) => {
-    console.log("id :", id);
     if (!alreadySaved) {
       setSavingPost(true);
 

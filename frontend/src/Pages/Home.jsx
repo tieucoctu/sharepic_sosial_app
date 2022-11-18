@@ -66,6 +66,7 @@ function Home() {
       <div className="pb-2 flex-1 h-screen overflow-y-scroll" ref={scrollRef}>
         <Routes>
           <Route exact path="/user-profile/:userId" element={<UserProfile />} />
+
           <Route exact path="/*" element={<Pins user={user && user} />} />
         </Routes>
       </div>

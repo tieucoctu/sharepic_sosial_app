@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineLogout } from "react-icons/ai";
+import { AiTwotoneEdit } from "react-icons/ai";
 import { useParams, useNavigate } from "react-router-dom";
-import { GoogleLogout } from "react-google-login";
-
 import {
   userCreatedPinsQuery,
   userQuery,
@@ -12,6 +10,8 @@ import { client } from "../client";
 import MasonryLayout from "./MasonryLayout";
 import Loading from "./Loading";
 import { STATE_PIN } from "../utils/constants";
+import Logout from "./Logout";
+import Modal from "./Modal";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
@@ -23,6 +23,10 @@ const UserProfile = () => {
   const [pins, setPins] = useState();
   const [text, setText] = useState(STATE_PIN.created);
   const [activeBtn, setActiveBtn] = useState(STATE_PIN.created);
+  const [toggle, setToggle] = useState(false);
+  const [changeName, setChangeName] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
   const navigate = useNavigate();
   const { userId } = useParams();
 
@@ -36,7 +40,7 @@ const UserProfile = () => {
     client.fetch(query).then((data) => {
       setUser(data[0]);
     });
-  }, [userId]);
+  }, [userId, toggle, showModal]);
 
   useEffect(() => {
     if (text === STATE_PIN.created) {
@@ -53,13 +57,15 @@ const UserProfile = () => {
       });
     }
   }, [text, userId]);
-
-  const logout = () => {
-    window.localStorage.clear();
-
-    navigate("/login");
+  const handleChange = async () => {
+    await client
+      .patch(userId)
+      .set({ userName: changeName })
+      .commit()
+      .then((result) => {
+        setToggle(!toggle);
+      });
   };
-
   if (!user) return <Loading message="Loading profile" />;
 
   return (
@@ -67,34 +73,56 @@ const UserProfile = () => {
       <div className="flex flex-col pb-5">
         <div className="relative flex flex-col mb-7">
           <div className="flex flex-col justify-center items-center">
-            <img
-              className="rounded-full w-20 h-20 mt-8 shadow-xl object-cover"
-              src={user.image}
-              alt="user-pic"
-            />
-          </div>
-          <h1 className="font-bold text-3xl text-center mt-3">
-            {user.userName}
-          </h1>
-          <div className="absolute top-0 z-1 right-2 top-2 p-2">
-            {userId === User.googleId && (
-              <GoogleLogout
-                clientId={`${process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN}`}
-                render={(renderProps) => (
-                  <button
-                    type="button"
-                    className=" bg-white p-2 rounded-full cursor-pointer outline-none shadow-md"
-                    onClick={renderProps.onClick}
-                    disabled={renderProps.disabled}
-                  >
-                    <AiOutlineLogout color="red" fontSize={21} />
-                  </button>
-                )}
-                onLogoutSuccess={logout}
-                cookiePolicy="single_host_origin"
+            <div className="relative ">
+              <img
+                className="rounded-full w-20 h-20 mt-20 shadow-xl object-cover"
+                src={user.image}
+                alt="user-pic"
               />
-            )}
+              <Modal
+                userId={userId}
+                showModal={showModal}
+                setShowModal={setShowModal}
+              />
+            </div>
           </div>
+          {toggle ? (
+            <div className="pt-3 flex items-center justify-center ">
+              <div className="relative w-5/6 xl:w-1/4">
+                <input
+                  type="search"
+                  id="search"
+                  onChange={(e) => setChangeName(e.target.value)}
+                  className=" w-full p-3 pl-4 text-base font-medium text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
+                  placeholder={user.userName}
+                  required
+                />
+                <button
+                  type="submit"
+                  onClick={() => handleChange()}
+                  className="text-white absolute top-[7px] right-[9px] bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-3xl text-sm p-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Lưu
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center items-center ">
+              <div className="font-bold text-3xl text-center pt-3 ">
+                {user.userName}
+              </div>
+              <button
+                className="relative"
+                onClick={() => setToggle(true)}
+                type="button"
+              >
+                <AiTwotoneEdit className="pt-1 ml-1  text-2xl absolute -top-1" />
+              </button>
+            </div>
+          )}
+          <h3 className="text-center mt-3">{User?.email}</h3>
+
+          <Logout userId={userId} User={User} />
         </div>
         <div className="text-center mb-7">
           <button

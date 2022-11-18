@@ -26,8 +26,11 @@ function Navbar({ searchTerm, setSearchTerm, user }) {
         />
       </div>
 
-      <Link to={`user-profile/${user?._id}`} className="hidden md:block">
-        <img src={user.image} alt="user" className="w-14  rounded-full" />
+      <Link
+        to={`user-profile/${user?._id}`}
+        className="hidden md:block max-h-12 max-w-fit overflow-hidden rounded-3xl"
+      >
+        <img src={user.image} alt="user" className="w-14 h-14 rounded-full" />
       </Link>
     </div>
   );

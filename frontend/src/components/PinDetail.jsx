@@ -74,8 +74,6 @@ const PinDetail = ({ user }) => {
   if (!pinDetail) {
     return <Loading />;
   }
-  console.log("", pinDetail?.like.length);
-  console.log("pinDetail :", pinDetail);
   return (
     <>
       <Lightbox
@@ -115,7 +113,10 @@ const PinDetail = ({ user }) => {
                 />
               </Like>
             </div>
-            <p className="ml-3">{pinDetail?.like.length} lượt thích</p>
+
+            <p className="ml-3">
+              {pinDetail?.like ? pinDetail?.like.length : 0} lượt thích
+            </p>
           </div>
           <div className="w-full p-5 flex-1 xl:min-w-620">
             <div className="flex items-center justify-between">
