@@ -19,12 +19,13 @@ function Login() {
 
   const responseGoogle = (response) => {
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
-    const { name, googleId, imageUrl } = response?.profileObj;
+    const { name, googleId, imageUrl, email } = response?.profileObj;
     const doc = {
       _id: googleId,
       _type: "user",
       userName: name,
       image: imageUrl,
+      email: email,
     };
     Cookies.set("googleId", googleId);
     client.createIfNotExists(doc).then(() => {

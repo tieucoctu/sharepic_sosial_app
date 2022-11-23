@@ -33,7 +33,7 @@ export const categories = [
     label: "Tranh vẽ",
   },
   {
-    value: "",
+    value: "travel",
     label: "Du lịch",
   },
   {
@@ -85,12 +85,14 @@ export const feedQuery = `*[_type == "pin"] | order(_createdAt desc) {
       url
     }
   },
+  title,
       _id,
       destination,
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
       save[]{
         _key,
@@ -117,13 +119,15 @@ export const pinDetailQuery = (pinId) => {
     postedBy->{
       _id,
       userName,
-      image
+      image,
+      email
     },
    save[]{
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },
     comments[]{
@@ -132,13 +136,15 @@ export const pinDetailQuery = (pinId) => {
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },like[]{
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },
   }`;
@@ -157,14 +163,16 @@ export const pinDetailMorePinQuery = (pin) => {
     postedBy->{
       _id,
       userName,
-      image
+      image,
+      email
     },
     save[]{
       _key,
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },
   }`;
@@ -183,14 +191,16 @@ export const searchQuery = (searchTerm) => {
             postedBy->{
               _id,
               userName,
-              image
+              image,
+              email
             },
             save[]{
               _key,
               postedBy->{
                 _id,
                 userName,
-                image
+                image,
+                email
               },
             },
           }`;
@@ -209,18 +219,21 @@ export const userCreatedPinsQuery = (userId) => {
         url
       }
     },
+    title,
     _id,
     destination,
     postedBy->{
       _id,
       userName,
-      image
+      image,
+      email
     },
     save[]{
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },
   }`;
@@ -228,24 +241,27 @@ export const userCreatedPinsQuery = (userId) => {
 };
 
 export const userSavedPinsQuery = (userId) => {
-  const query = `*[ _type == 'pin' && userId == '${userId}' in save[].userId   ] | order(_createdAt desc) {
+  const query = `*[_type == 'pin' && '${userId}' in save[].userId ] | order(_createdAt desc) {
    image{
       asset->{
         url
       }
     },
     _id,
+    title,
     destination,
     postedBy->{
       _id,
       userName,
-      image
+      image,
+      email
     },
     save[]{
       postedBy->{
         _id,
         userName,
-        image
+        image,
+        email
       },
     },
   }`;

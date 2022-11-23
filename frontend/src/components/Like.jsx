@@ -43,13 +43,11 @@ function Like({ children, pinDetail }) {
         (item) => item?.postedBy?._id === user?.googleId
       );
       if (like >= 0) {
-        console.log("like :", like);
         await client
           .patch(pinId)
           .unset([`like[${like}]`])
           .commit()
           .then((result) => {
-            console.log("deleted imageAsset", result);
             dispatch(setUpdate());
             setClick(false);
           });

@@ -21,14 +21,15 @@ function Feed() {
       });
     } else {
       client.fetch(feedQuery).then((data) => {
-        console.log("data :", data);
         setPins(data);
         setLoading(false);
       });
     }
   }, [categoryId]);
   if (loading) return <Loading />;
-  return <div>{pins && <MasonryLayout pins={pins} />}</div>;
+  return (
+    <div>{pins && <MasonryLayout pins={pins} categoryId={categoryId} />}</div>
+  );
 }
 
 export default Feed;

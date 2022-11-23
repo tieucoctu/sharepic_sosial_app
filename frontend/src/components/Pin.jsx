@@ -9,7 +9,7 @@ import { fetchUser } from "./fetchUser";
 
 function Pin({ pin }) {
   const navigate = useNavigate();
-  const { postedBy, image, _id, destination, save } = pin;
+  const { postedBy, image, _id, destination, save, title } = pin;
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
 
@@ -79,7 +79,7 @@ function Pin({ pin }) {
               {alreadySaved ? (
                 <div
                   type="button"
-                  className="bg-red-500 opacity-70  text-white font-bold px-2 py-1 text-base rounded-3xl hover:shadow-md outline-none text-sm"
+                  className="bg-red-500 opacity-70  text-white font-bold px-2 py-1 rounded-3xl hover:shadow-md outline-none text-sm"
                 >
                   Đã lưu
                 </div>
@@ -125,16 +125,19 @@ function Pin({ pin }) {
           </div>
         )}
       </div>
+      <p className="w-52 px-1 text-ellipsis overflow-hidden whitespace-nowrap">
+        {title}
+      </p>
       <Link
         to={`/user-profile/${postedBy?._id}`}
-        className="flex gap-2 mt-2 items-center"
+        className="flex gap-2  items-center"
       >
         <img
           className="w-8 h-8 rounded-full object-cover"
           src={postedBy?.image}
           alt="user-profile"
         />
-        <p className="font-semibold capitalize">{postedBy?.userName}</p>
+        <p className="font-semibold">{postedBy?.userName}</p>
       </Link>
     </div>
   );

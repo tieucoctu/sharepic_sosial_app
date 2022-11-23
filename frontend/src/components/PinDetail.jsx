@@ -59,7 +59,6 @@ const PinDetail = ({ user }) => {
         ])
         .commit()
         .then(() => {
-          console.log("updated");
           fetchPinDetails();
           setComment("");
           setAddingComment(false);
@@ -141,7 +140,7 @@ const PinDetail = ({ user }) => {
             </p>
             <p className="mt-3">Mô tả: {pinDetail.about}</p>
             <p className="mt-3">
-              phân loại:
+              Phân loại:
               {pinDetail?.category &&
                 pinDetail?.category.map((detail) =>
                   categories.map((ctg) => {
@@ -179,29 +178,34 @@ const PinDetail = ({ user }) => {
                 className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
                 onClick={addComment}
               >
-                {addingComment ? "Đang gứi..." : "Gửi"}
+                {addingComment ? "Đang gửi..." : "Gửi"}
               </button>
             </div>
-            <div
-              className=" mt-4 overflow-y-auto"
-              style={{ maxHeight: "555px" }}
-            >
+            <div className=" mt-4 " style={{ maxHeight: "555px" }}>
               {pinDetail?.comments?.map((item, index) => {
                 return (
-                  <div
-                    className="flex gap-2 mb-6 items-center bg-white rounded-full relative py-1 px-2  divide-y divide-gray-100 shadow dark:bg-gray-700 "
-                    key={index}
-                  >
-                    <img
-                      src={item.postedBy?.image}
-                      className="w-10 h-10 rounded-full cursor-pointer"
-                      alt="user-profile"
-                    />
-                    <div className="flex flex-col">
-                      <p className="font-bold">{item.postedBy?.userName}</p>
-                      <p>{item.comment}</p>
+                  <div className="relative w-full">
+                    <div
+                      className="flex gap-2 mb-6 items-center bg-white rounded-full relative py-1 px-2   divide-gray-100 shadow dark:bg-gray-700  xl:max-w-[700px] max-w-[280px]"
+                      key={index}
+                    >
+                      <img
+                        src={item.postedBy?.image}
+                        className="w-10 h-10 rounded-full cursor-pointer"
+                        alt="user-profile"
+                      />
+                      <div className="flex flex-col xl:max-w-[600px] max-w-[200px] ">
+                        <Link
+                          to={`/user-profile/${item?.postedBy._id}`}
+                          className="font-bold"
+                        >
+                          {item.postedBy?.userName}
+                        </Link>
+                        <div className=" ">
+                          <p className="break-words">{item.comment}</p>
+                        </div>
+                      </div>
                     </div>
-
                     {user?._id === item?.postedBy?._id ? (
                       <RemoveCmt idKey={index} />
                     ) : (
@@ -216,7 +220,7 @@ const PinDetail = ({ user }) => {
       )}
       {pins?.length > 0 && (
         <h2 className="text-center font-bold text-2xl mt-8 mb-4">
-          More like this
+          Thể loại tương tự
         </h2>
       )}
       {pins ? (

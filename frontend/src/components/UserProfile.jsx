@@ -12,6 +12,7 @@ import Loading from "./Loading";
 import { STATE_PIN } from "../utils/constants";
 import Logout from "./Logout";
 import Modal from "./Modal";
+import Navbar from "../layout/Navbar";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
@@ -26,14 +27,8 @@ const UserProfile = () => {
   const [toggle, setToggle] = useState(false);
   const [changeName, setChangeName] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  const navigate = useNavigate();
+  const [error, setError] = useState();
   const { userId } = useParams();
-
-  const User =
-    localStorage.getItem("user") !== "undefined"
-      ? JSON.parse(localStorage.getItem("user"))
-      : localStorage.clear();
 
   useEffect(() => {
     const query = userQuery(userId);
@@ -51,20 +46,23 @@ const UserProfile = () => {
       });
     } else if (text === STATE_PIN.saved) {
       const savedPinsQuery = userSavedPinsQuery(userId);
-
       client.fetch(savedPinsQuery).then((data) => {
         setPins(data);
       });
     }
-  }, [text, userId]);
+  }, [text, userId, toggle]);
   const handleChange = async () => {
-    await client
-      .patch(userId)
-      .set({ userName: changeName })
-      .commit()
-      .then((result) => {
-        setToggle(!toggle);
-      });
+    if (changeName) {
+      await client
+        .patch(userId)
+        .set({ userName: changeName })
+        .commit()
+        .then((result) => {
+          setToggle(!toggle);
+        });
+    } else {
+      setError("Vui lòng nhập thông tin");
+    }
   };
   if (!user) return <Loading message="Loading profile" />;
 
@@ -75,7 +73,7 @@ const UserProfile = () => {
           <div className="flex flex-col justify-center items-center">
             <div className="relative ">
               <img
-                className="rounded-full w-20 h-20 mt-20 shadow-xl object-cover"
+                className="rounded-full w-20 h-20 mt-4 shadow-xl object-cover"
                 src={user.image}
                 alt="user-pic"
               />
@@ -87,11 +85,10 @@ const UserProfile = () => {
             </div>
           </div>
           {toggle ? (
-            <div className="pt-3 flex items-center justify-center ">
-              <div className="relative w-5/6 xl:w-1/4">
+            <div className="pt-3 flex items-center justify-center flex-col">
+              <div className="relative w-5/6 xl:w-1/4 ">
                 <input
-                  type="search"
-                  id="search"
+                  type="text"
                   onChange={(e) => setChangeName(e.target.value)}
                   className=" w-full p-3 pl-4 text-base font-medium text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
                   placeholder={user.userName}
@@ -105,6 +102,7 @@ const UserProfile = () => {
                   Lưu
                 </button>
               </div>
+              <p className="text-red-500 ">{error}</p>
             </div>
           ) : (
             <div className="flex justify-center items-center ">
@@ -120,9 +118,7 @@ const UserProfile = () => {
               </button>
             </div>
           )}
-          <h3 className="text-center mt-3">{User?.email}</h3>
-
-          <Logout userId={userId} User={User} />
+          <h3 className="text-center mt-3">{user?.email}</h3>
         </div>
         <div className="text-center mb-7">
           <button

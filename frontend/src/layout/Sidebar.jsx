@@ -1,6 +1,5 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
-import { RiHomeFill } from "react-icons/ri";
 import logo from "../assets/logo.png";
 import { categories } from "../utils/data";
 
@@ -28,10 +27,7 @@ function Sidebar({ closeToggle }) {
           <h3 className="my-2 px-16 text-xl 2xl:text-xl font-semibold">
             Thể loại
           </h3>
-          <div
-            className="mx-4 ml-6 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 overflow-y-scroll scrollbar-rounded-full scrollbar-rounded-full"
-            style={{ maxHeight: "620px" }}
-          >
+          <div className="mx-4 ml-6 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 overflow-y-scroll scrollbar-rounded-full scrollbar-rounded-full md:max-h-[700px] max-h-[450px]">
             {categories.map((category) => (
               <NavLink
                 to={`/category/${category.value}`}

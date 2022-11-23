@@ -5,6 +5,7 @@ import CreatePin from "../components/CreatePin";
 import Feed from "../components/Feed";
 import PinDetail from "../components/PinDetail";
 import Search from "../components/Search";
+import UserProfile from "../components/UserProfile";
 import NavBar from "../layout/Navbar";
 
 function Pins({ user }) {
@@ -21,6 +22,7 @@ function Pins({ user }) {
       <div className="h-full">
         <Routes>
           <Route exact path="/" element={<Feed />} />
+          <Route exact path="/user-profile/:userId" element={<UserProfile />} />
           <Route path="/category/:categoryId" element={<Feed />} />
           <Route
             path="/pin-detail/:pinId"

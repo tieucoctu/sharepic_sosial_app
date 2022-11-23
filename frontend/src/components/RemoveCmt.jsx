@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { setUpdate } from "../app/constant/common";
 import { client } from "../client";
@@ -16,7 +16,6 @@ export default function RemoveCmt({ idKey }) {
       .commit()
       .then((result) => {
         setIsToggle(!isToggle);
-        console.log("deleted imageAsset", result);
         dispatch(setUpdate());
       });
   };
@@ -29,7 +28,7 @@ export default function RemoveCmt({ idKey }) {
       </div>
       <div
         className={
-          (isToggle ? "block " : "hidden ") + "absolute right-2 top-10 z-50"
+          (isToggle ? "block " : "hidden ") + "absolute right-2 top-12 z-50"
         }
       >
         <button
