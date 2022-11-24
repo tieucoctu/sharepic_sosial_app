@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiTwotoneEdit } from "react-icons/ai";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -13,6 +13,7 @@ import { STATE_PIN } from "../utils/constants";
 import Logout from "./Logout";
 import Modal from "./Modal";
 import Navbar from "../layout/Navbar";
+import { useSelector } from "react-redux";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
@@ -29,7 +30,9 @@ const UserProfile = () => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState();
   const { userId } = useParams();
-
+  const { update } = useSelector((state) => state.common);
+  const inputRef = useRef(null);
+  const id = localStorage.getItem("googleId");
   useEffect(() => {
     const query = userQuery(userId);
     client.fetch(query).then((data) => {
@@ -50,7 +53,14 @@ const UserProfile = () => {
         setPins(data);
       });
     }
-  }, [text, userId, toggle]);
+  }, [text, userId, toggle, update]);
+
+  useEffect(() => {
+    if (toggle) {
+      inputRef.current.focus();
+    }
+  }, [toggle]);
+
   const handleChange = async () => {
     if (changeName) {
       await client
@@ -77,11 +87,13 @@ const UserProfile = () => {
                 src={user.image}
                 alt="user-pic"
               />
-              <Modal
-                userId={userId}
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
+              {userId === id ? (
+                <Modal
+                  userId={userId}
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                />
+              ) : null}
             </div>
           </div>
           {toggle ? (
@@ -93,6 +105,9 @@ const UserProfile = () => {
                   className=" w-full p-3 pl-4 text-base font-medium text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
                   placeholder={user.userName}
                   required
+                  maxLength={30}
+                  onBlur={() => setToggle(false)}
+                  ref={inputRef}
                 />
                 <button
                   type="submit"
@@ -109,13 +124,15 @@ const UserProfile = () => {
               <div className="font-bold text-3xl text-center pt-3 ">
                 {user.userName}
               </div>
-              <button
-                className="relative"
-                onClick={() => setToggle(true)}
-                type="button"
-              >
-                <AiTwotoneEdit className="pt-1 ml-1  text-2xl absolute -top-1" />
-              </button>
+              {userId === id ? (
+                <button
+                  className="relative"
+                  onClick={() => setToggle(true)}
+                  type="button"
+                >
+                  <AiTwotoneEdit className="pt-1 ml-1  text-2xl absolute -top-1" />
+                </button>
+              ) : null}
             </div>
           )}
           <h3 className="text-center mt-3">{user?.email}</h3>

@@ -41,7 +41,6 @@ function Modal({ userId, showModal, setShowModal }) {
       .set({ image: urlImg })
       .commit()
       .then((result) => {
-        console.log("result :", result);
         setImageAsset();
         setShowModal(false);
       });

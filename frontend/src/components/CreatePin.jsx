@@ -118,7 +118,7 @@ const CreatePin = ({ user }) => {
                   <img
                     src={imageAsset?.url}
                     alt="uploaded-pic"
-                    className="h-full w-full"
+                    className="h-full w-full object-contain"
                   />
 
                   <button

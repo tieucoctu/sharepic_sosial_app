@@ -8,12 +8,13 @@ import { useState } from "react";
 import logo from "../assets/Untitled-1.png";
 import { useEffect } from "react";
 import { userQuery } from "../utils/data";
-import UserProfile from "../components/UserProfile";
 import Pins from "./Pins";
 import { fetchUser } from "../components/fetchUser";
+
 function Home() {
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const [user, setUser] = useState();
+  console.log("user :", user);
   const scrollRef = useRef(null);
 
   const userInfo = fetchUser();
@@ -65,7 +66,7 @@ function Home() {
       </div>
       <div className="pb-2 flex-1 h-screen overflow-y-scroll" ref={scrollRef}>
         <Routes>
-          <Route exact path="/*" element={<Pins user={user && user} />} />
+          <Route path="/*" element={<Pins user={user && user} />} />
         </Routes>
       </div>
     </div>

@@ -211,6 +211,10 @@ export const userQuery = (userId) => {
   const query = `*[_type == "user" && _id == '${userId}']`;
   return query;
 };
+export const allUserQuery = () => {
+  const query = `*[_type == "user"]`;
+  return query;
+};
 
 export const userCreatedPinsQuery = (userId) => {
   const query = `*[ _type == 'pin' && userId == '${userId}'] | order(_createdAt desc){

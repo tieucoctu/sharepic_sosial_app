@@ -95,7 +95,7 @@ const PinDetail = ({ user }) => {
           className="flex xl:flex-row flex-col m-auto bg-white"
           style={{ maxWidth: "1500px", borderRadius: "32px" }}
         >
-          <div className="flex justify-center items-center md:items-start flex-initial p-4 flex-col">
+          <div className="flex justify-center  md:items-start flex-initial p-4 flex-col">
             <div className="relative">
               <button
                 type="button"
@@ -112,14 +112,13 @@ const PinDetail = ({ user }) => {
                 />
               </Like>
             </div>
-
-            <p className="ml-3">
+            <span className="ml-3">
               {pinDetail?.like ? pinDetail?.like.length : 0} lượt thích
-            </p>
+            </span>
           </div>
-          <div className="w-full p-5 flex-1 xl:min-w-620">
+          <div className="w-full xl:p-5 px-5 pt-0 flex-1 xl:min-w-620">
             <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold break-words mt-3">
+              <h1 className="text-4xl font-bold break-words xl:mt-3">
                 {pinDetail.title}
               </h1>
               <div className="flex gap-2 items-center">
@@ -138,8 +137,8 @@ const PinDetail = ({ user }) => {
                 {pinDetail?.postedBy.userName}
               </Link>
             </p>
-            <p className="mt-3">Mô tả: {pinDetail.about}</p>
-            <p className="mt-3">
+            <p className="mt-3 break-words">Mô tả: {pinDetail.about}</p>
+            <p className="mt-3 break-words">
               Phân loại:
               {pinDetail?.category &&
                 pinDetail?.category.map((detail) =>
@@ -157,7 +156,7 @@ const PinDetail = ({ user }) => {
                   })
                 )}
             </p>
-            <h2 className="mt-5 text-2xl">Nhận xét: </h2>
+            <h2 className="mt-5 text-2xl">Bình luận: </h2>
             <div className="flex flex-wrap mt-6 gap-3">
               <Link to={`/user-profile/${user._id}`}>
                 <img

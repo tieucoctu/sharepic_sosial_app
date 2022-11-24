@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { GoogleLogin } from "react-google-login";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
@@ -7,30 +7,58 @@ import { client } from "../client";
 import { gapi } from "gapi-script";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
+import { allUserQuery } from "../utils/data";
 export const clientId = process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN;
 
 function Login() {
   const navigate = useNavigate();
+  const [first, setFirst] = useState(false);
+  const [users, setUsers] = useState();
   useEffect(() => {
     gapi.load("client:auth2", () => {
       gapi.auth2.init({ clientId: clientId });
     });
   }, []);
-
+  useEffect(() => {
+    const query = allUserQuery();
+    client.fetch(query).then((data) => {
+      setUsers(data);
+    });
+  }, []);
   const responseGoogle = (response) => {
+    console.log("response :", response);
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl, email } = response?.profileObj;
-    const doc = {
-      _id: googleId,
-      _type: "user",
-      userName: name,
-      image: imageUrl,
-      email: email,
-    };
-    Cookies.set("googleId", googleId);
-    client.createIfNotExists(doc).then(() => {
-      navigate("/", { replace: true });
+    users.map((user) => {
+      if (user?.email === email) {
+        console.log("email :", email);
+        const doc = {
+          _id: googleId,
+          _type: "user",
+          userName: name,
+          image: imageUrl,
+          email: email,
+        };
+        client.createIfNotExists(doc).then(() => {
+          navigate("/", { replace: true });
+        });
+      } else {
+        const doc = {
+          _id: googleId,
+          _type: "user",
+          userName: name,
+          image: imageUrl,
+          email: email,
+          active: true,
+        };
+        client.createIfNotExists(doc).then(() => {
+          navigate("/", { replace: true });
+        });
+      }
     });
+
+    localStorage.setItem("googleId", googleId);
+    Cookies.set("googleId", googleId);
   };
 
   return (

@@ -18,5 +18,6 @@ export default {
       title: "Email",
       type: "string",
     },
+    { name: "active", title: "Active", type: "boolean" },
   ],
 };

@@ -6,17 +6,23 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 import { fetchUser } from "./fetchUser";
-
+import { useDispatch } from "react-redux";
+import { setUpdate } from "../app/constant/common";
 function Pin({ pin }) {
   const navigate = useNavigate();
   const { postedBy, image, _id, destination, save, title } = pin;
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
-
+  const dispatch = useDispatch();
   const user = fetchUser();
 
   const deletePin = async (id) => {
-    await client.delete(id);
+    try {
+      await client.delete(id);
+      dispatch(setUpdate());
+    } catch (err) {
+      console.log("err :", err);
+    }
   };
 
   let alreadySaved = !!save?.filter(
@@ -88,6 +94,7 @@ function Pin({ pin }) {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
+                    dispatch(setUpdate());
                     savePin(_id);
                   }}
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-1 rounded-3xl hover:shadow-md outline-none text-sm"

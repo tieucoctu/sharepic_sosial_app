@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import AccountManager from "../components/AccountManager";
 import CreatePin from "../components/CreatePin";
 import Feed from "../components/Feed";
 import PinDetail from "../components/PinDetail";
@@ -23,6 +24,10 @@ function Pins({ user }) {
         <Routes>
           <Route exact path="/" element={<Feed />} />
           <Route exact path="/user-profile/:userId" element={<UserProfile />} />
+          <Route
+            path="/manager"
+            element={<AccountManager user={user && user} />}
+          />
           <Route path="/category/:categoryId" element={<Feed />} />
           <Route
             path="/pin-detail/:pinId"

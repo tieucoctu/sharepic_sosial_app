@@ -9,9 +9,18 @@ import save from "./save";
 import postedBy from "./postedBy";
 import comment from "./comment";
 import like from "./like";
+import categories from "./categories";
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
   name: "default",
-  types: schemaTypes.concat([user, pin, comment, postedBy, save, like]),
+  types: schemaTypes.concat([
+    user,
+    pin,
+    // comment,
+    postedBy,
+    // save,
+    // like,
+    categories,
+  ]),
 });
