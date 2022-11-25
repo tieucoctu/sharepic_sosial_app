@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import Select from "react-select";
-import { categories } from "../utils/data";
+import { allCategoriess } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
 import { Controller, useForm } from "react-hook-form";
@@ -12,13 +12,21 @@ const CreatePin = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
+  const [allCategories, setAllCategories] = useState("");
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
   } = useForm();
-  const navigate = useNavigate();
+  useEffect(() => {
+    const query = allCategoriess();
+
+    client.fetch(query).then((data) => {
+      setAllCategories(data);
+    });
+  }, []);
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
@@ -49,9 +57,11 @@ const CreatePin = ({ user }) => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (imageAsset) {
-      const { title, about, category, destination } = data;
+      const { title, about, categories, destination } = data;
+      let category = [];
+      categories?.map((c) => category.push(c.label));
       if (title && about && imageAsset?._id && category) {
         const doc = {
           _type: "pin",
@@ -72,7 +82,7 @@ const CreatePin = ({ user }) => {
           },
           category,
         };
-        client.create(doc).then(() => {
+        await client.create(doc).then(() => {
           navigate("/");
         });
       }
@@ -179,23 +189,25 @@ const CreatePin = ({ user }) => {
                 <p className="mb-2 font-semibold text:lg sm:text-xl">
                   Chọn danh mục ghim
                 </p>
-                <Controller
-                  {...register("category", { required: true })}
-                  control={control}
-                  name="category"
-                  render={({ field }) => {
-                    return (
-                      <Select
-                        {...field}
-                        isMulti
-                        className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                        options={categories}
-                      />
-                    );
-                  }}
-                />
+                {allCategories && (
+                  <Controller
+                    {...register("categories", { required: true })}
+                    control={control}
+                    name="categories"
+                    render={({ field }) => {
+                      return (
+                        <Select
+                          {...field}
+                          isMulti
+                          className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                          options={allCategories}
+                        />
+                      );
+                    }}
+                  />
+                )}
               </div>
-              {errors?.category && (
+              {errors?.categories && (
                 <p className="text-red-500">Vui lòng chọn danh mục</p>
               )}
               <div className="flex justify-end items-end mt-5">

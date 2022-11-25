@@ -18,6 +18,15 @@ export default {
       title: "Email",
       type: "string",
     },
-    { name: "active", title: "Active", type: "boolean" },
+    {
+      name: "status",
+      title: "Status",
+      type: "boolean",
+    },
+    {
+      name: "role",
+      title: "Role",
+      type: "string",
+    },
   ],
 };

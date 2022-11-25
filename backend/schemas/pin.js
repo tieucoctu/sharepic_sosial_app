@@ -46,52 +46,19 @@ export default {
       name: "save",
       title: "Save",
       type: "array",
-      of: [
-        {
-          name: "postedBy",
-          title: "PostedBy",
-          type: "postedBy",
-        },
-        {
-          name: "userId",
-          title: "UserId",
-          type: "string",
-        },
-      ],
+      of: [{ type: "save" }],
     },
     {
       name: "comments",
       title: "Comments",
       type: "array",
-      of: [
-        {
-          name: "postedBy",
-          title: "PostedBy",
-          type: "postedBy",
-        },
-        {
-          name: "comment",
-          title: "Comment",
-          type: "string",
-        },
-      ],
+      of: [{ type: "comment" }],
     },
     {
       name: "like",
       title: "Like",
       type: "array",
-      of: [
-        {
-          name: "postedBy",
-          title: "PostedBy",
-          type: "postedBy",
-        },
-        {
-          name: "userId",
-          title: "UserId",
-          type: "string",
-        },
-      ],
+      of: [{ type: "like" }],
     },
   ],
 };

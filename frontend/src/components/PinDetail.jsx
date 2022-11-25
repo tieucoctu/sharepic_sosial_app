@@ -143,7 +143,7 @@ const PinDetail = ({ user }) => {
               {pinDetail?.category &&
                 pinDetail?.category.map((detail) =>
                   categories.map((ctg) => {
-                    if (ctg.value === detail)
+                    if (ctg.label === detail)
                       return (
                         <Link
                           className=" text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium"

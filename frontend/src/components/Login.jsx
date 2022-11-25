@@ -12,7 +12,6 @@ export const clientId = process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN;
 
 function Login() {
   const navigate = useNavigate();
-  const [first, setFirst] = useState(false);
   const [users, setUsers] = useState();
   useEffect(() => {
     gapi.load("client:auth2", () => {
@@ -26,35 +25,20 @@ function Login() {
     });
   }, []);
   const responseGoogle = (response) => {
-    console.log("response :", response);
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl, email } = response?.profileObj;
-    users.map((user) => {
-      if (user?.email === email) {
-        console.log("email :", email);
-        const doc = {
-          _id: googleId,
-          _type: "user",
-          userName: name,
-          image: imageUrl,
-          email: email,
-        };
-        client.createIfNotExists(doc).then(() => {
-          navigate("/", { replace: true });
-        });
-      } else {
-        const doc = {
-          _id: googleId,
-          _type: "user",
-          userName: name,
-          image: imageUrl,
-          email: email,
-          active: true,
-        };
-        client.createIfNotExists(doc).then(() => {
-          navigate("/", { replace: true });
-        });
-      }
+
+    const doc = {
+      _id: googleId,
+      _type: "user",
+      userName: name,
+      image: imageUrl,
+      email: email,
+      status: true,
+      role: "user",
+    };
+    client.createIfNotExists(doc).then(() => {
+      navigate("/", { replace: true });
     });
 
     localStorage.setItem("googleId", googleId);

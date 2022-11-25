@@ -9,12 +9,11 @@ function Sidebar({ closeToggle }) {
     "flex items-center p-1 px-6 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium  ";
   const isActiveStyle =
     "flex items-center p-1 px-6 gap-3 font-extrabold border-r-2 border-back hover: text-black transition-all duration-200 ease-in-out transition-all duration-200 ease-in-out capitalize font-medium ";
-  const silderAdmin = ["Quản lý tài khoản", "Quản lý chủ đề"];
+
   const handleCloseSiderbar = () => {
     if (closeToggle) closeToggle(false);
   };
-  const userId = Cookies.get("googleId");
-  const adminID = process.env.REACT_APP_ADMIN_ID;
+
   return (
     <div className="flex flex-col justify-between bg-white h-full overflow-y-scroll min-w-210 hide-scrollbar">
       <div className="flex  flex-col">
@@ -26,20 +25,6 @@ function Sidebar({ closeToggle }) {
           <img src={logo} alt="logo" className="w-full" />
         </Link>
         <div className="flex flex-col gap-1">
-          {userId === adminID ? (
-            <div className="mx-4 ">
-              <NavLink
-                to="/manager"
-                className={({ isActive }) =>
-                  isActive ? isActiveStyle : isNotActiveStyle
-                }
-              >
-                Quản lý tài khoản
-              </NavLink>
-            </div>
-          ) : (
-            ""
-          )}
           <h3 className="my-2 px-16 text-xl 2xl:text-xl font-semibold">
             Thể loại
           </h3>
