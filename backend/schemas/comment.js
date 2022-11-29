@@ -13,5 +13,10 @@ export default {
       title: "Comment",
       type: "string",
     },
+    {
+      name: "key",
+      title: "Key",
+      type: "string",
+    },
   ],
 };

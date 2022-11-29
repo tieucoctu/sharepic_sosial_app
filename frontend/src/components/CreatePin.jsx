@@ -61,7 +61,7 @@ const CreatePin = ({ user }) => {
     if (imageAsset) {
       const { title, about, categories, destination } = data;
       let category = [];
-      categories?.map((c) => category.push(c.label));
+      categories?.map((c) => category.push(c.value));
       if (title && about && imageAsset?._id && category) {
         const doc = {
           _type: "pin",

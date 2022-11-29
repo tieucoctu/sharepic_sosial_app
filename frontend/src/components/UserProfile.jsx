@@ -10,11 +10,9 @@ import { client } from "../client";
 import MasonryLayout from "./MasonryLayout";
 import Loading from "./Loading";
 import { STATE_PIN } from "../utils/constants";
-import Logout from "./Logout";
 import Modal from "./Modal";
-import Navbar from "../layout/Navbar";
 import { useSelector } from "react-redux";
-
+import { HiLink } from "react-icons/hi";
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
 const notActiveBtnStyles =
@@ -33,6 +31,15 @@ const UserProfile = () => {
   const { update } = useSelector((state) => state.common);
   const inputRef = useRef(null);
   const id = localStorage.getItem("googleId");
+  const [copySuccess, setCopySuccess] = useState("");
+  async function copyToClip() {
+    // eslint-disable-next-line no-restricted-globals
+    await navigator.clipboard.writeText(location.href);
+    setCopySuccess("Copied");
+    setTimeout(() => {
+      setCopySuccess();
+    }, 2000);
+  }
   useEffect(() => {
     const query = userQuery(userId);
     client.fetch(query).then((data) => {
@@ -130,12 +137,25 @@ const UserProfile = () => {
                   onClick={() => setToggle(true)}
                   type="button"
                 >
-                  <AiTwotoneEdit className="pt-1 ml-1  text-2xl absolute -top-1" />
+                  <AiTwotoneEdit className="pt-1 ml-1 text-2xl absolute -top-1" />
                 </button>
               ) : null}
             </div>
           )}
-          <h3 className="text-center mt-3">{user?.email}</h3>
+          <div className="flex justify-center items-center relative ">
+            <div className=" text-center pt-3 ">
+              <h3 className="text-center mt-3">{user?.email}</h3>
+            </div>
+            <div className="relative">
+              <button
+                className="absolute bg-slate-100 text-black hover:bg-slate-200 rounded-3xl ml-2 p-1 "
+                onClick={() => copyToClip()}
+                type="button"
+              >
+                <HiLink className="font-bold text-2xl " />
+              </button>
+            </div>
+          </div>
         </div>
         <div className="text-center mb-7">
           <button
@@ -178,6 +198,11 @@ const UserProfile = () => {
           </div>
         )}
       </div>
+      {copySuccess && (
+        <div className="fixed bottom-10 left-1/2 rounded-lg border-green-400 border-l-[4px] bg-white px-[35px] py-[15px] transition duration-150 ease-in-out font-medium">
+          Copied
+        </div>
+      )}
     </div>
   );
 };

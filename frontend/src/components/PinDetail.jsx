@@ -54,6 +54,7 @@ const PinDetail = ({ user }) => {
           {
             comment,
             _key: uuidv4(),
+            key: uuidv4(),
             postedBy: { _type: "postedBy", _ref: user._id },
           },
         ])
@@ -139,11 +140,12 @@ const PinDetail = ({ user }) => {
             </p>
             <p className="mt-3 break-words">Mô tả: {pinDetail.about}</p>
             <p className="mt-3 break-words">
-              Phân loại:
+              Các thể loại:
               {pinDetail?.category &&
                 pinDetail?.category.map((detail) =>
+                  // eslint-disable-next-line array-callback-return
                   categories.map((ctg) => {
-                    if (ctg.label === detail)
+                    if (ctg.value === detail)
                       return (
                         <Link
                           className=" text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium"
