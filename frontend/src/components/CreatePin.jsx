@@ -3,7 +3,7 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import Select from "react-select";
-import { allCategoriess, categories, pinDetailQuery } from "../utils/data";
+import { allCategoriess, pinDetailQuery } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
 import { Controller, useForm } from "react-hook-form";
@@ -28,7 +28,6 @@ const CreatePin = ({ user, isAdd }) => {
   const [pinDetail, setPinDetail] = useState();
   console.log("pinDetail :", pinDetail);
   const { pinId } = useParams();
-  console.log("pinId :", pinId);
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
     if (query) {
@@ -41,20 +40,17 @@ const CreatePin = ({ user, isAdd }) => {
     if (isAdd) {
       resetField();
     } else {
-      setValue("upload_image", pinDetail?.image?.asset?.url);
+      setValue("upload_image", pinDetail?.image);
       setValue("title", pinDetail?.title);
       setValue("about", pinDetail?.about);
       setValue("destination", pinDetail?.destination);
       // eslint-disable-next-line array-callback-return
-      categories.map((category) => {
-        if (category.value === pinDetail?.category) {
-          setValue("categories", {
-            label: category.label,
-            value: pinDetail?.category,
-          });
-          console.log('setValue("categories" :', getValues("categories"));
-        }
+      const ctgs = [];
+      pinDetail?.categories?.map((ctg) => {
+        const newCtg = { label: ctg?.label, value: ctg?.category };
+        ctgs.push(newCtg);
       });
+      setValue("categories", ctgs);
     }
   }, [pinDetail, isAdd]);
 
@@ -71,6 +67,7 @@ const CreatePin = ({ user, isAdd }) => {
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
+    console.log("selectedFile :", selectedFile);
     if (
       selectedFile.type === "image/png" ||
       selectedFile.type === "image/svg" ||
@@ -97,13 +94,17 @@ const CreatePin = ({ user, isAdd }) => {
       setWrongImageType(true);
     }
   };
-
+  console.log(getValues("upload_image"));
   const onSubmit = async (data) => {
-    if (imageAsset && user.status) {
-      const { title, about, categories, destination } = data;
-      let category = [];
-      categories?.map((c) => category.push(c.value));
-      if (title && about && imageAsset?._id && category) {
+    console.log("data :", data);
+    const { title, about, categories, destination } = data;
+    let category = [];
+    // categories?.map((c) => {
+    //   const catgories ={value:c.value,label: c.label}
+    //   category.push(catgories)
+    // });
+    if (imageAsset && user.status && isAdd) {
+      if (title && about && imageAsset?._id && categories) {
         const doc = {
           _type: "pin",
           title,
@@ -121,12 +122,32 @@ const CreatePin = ({ user, isAdd }) => {
             _type: "postedBy",
             _ref: user._id,
           },
-          category,
+          categories,
         };
         await client.create(doc).then(() => {
           navigate("/");
         });
       }
+    } else if (user.status) {
+      await client
+        .patch(pinId)
+        .set({
+          title: title,
+          about: about,
+          categories: categories,
+          destination: destination,
+          image: {
+            _type: "image",
+            asset: {
+              _type: "reference",
+              _ref: imageAsset?._id,
+            },
+          },
+        })
+        .commit()
+        .then((result) => {
+          console.log("result :", result);
+        });
     } else {
       setError(true);
       setTimeout(() => setError(false), 2000);
@@ -151,11 +172,11 @@ const CreatePin = ({ user, isAdd }) => {
                       <p className="text-lg z-50">Click to upload</p>
                     </div>
 
-                    {getValues("upload_image") ? (
+                    {!isAdd ? (
                       <img
                         src={getValues("upload_image")}
                         alt="pic"
-                        className="absolute"
+                        className="absolute object-cover p-8  lg:w-[430px] 2xl:w-[550px]"
                       />
                     ) : (
                       <p className="mt-32 text-gray-400">
@@ -236,6 +257,7 @@ const CreatePin = ({ user, isAdd }) => {
             <input
               type="url"
               name="destination"
+              {...register("destination")}
               placeholder="Thêm một liên kết"
               className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
             />

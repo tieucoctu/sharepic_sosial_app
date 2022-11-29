@@ -17,10 +17,10 @@ export default createSchema({
   types: schemaTypes.concat([
     user,
     pin,
-    comment,
+    // comment,
     postedBy,
-    save,
-    like,
+    // save,
+    // like,
     categories,
   ]),
 });

@@ -19,10 +19,20 @@ export default {
       type: "url",
     },
     {
-      name: "category",
-      title: "Category",
+      name: "categories",
+      title: "Categories",
       type: "array",
-      of: [{ type: "string" }],
+      of: [
+        {
+          name: "categories",
+          title: "Categories",
+          type: "document",
+          fields: [
+            { name: "label", type: "string", title: "Label" },
+            { name: "value", type: "string", title: "Value" },
+          ],
+        },
+      ],
     },
     {
       name: "image",
@@ -46,19 +56,78 @@ export default {
       name: "save",
       title: "Save",
       type: "array",
-      of: [{ type: "save" }],
+      of: [
+        {
+          name: "save",
+          title: "Save",
+          type: "document",
+          fields: [
+            {
+              name: "postedBy",
+              title: "PostedBy",
+              type: "postedBy",
+            },
+            {
+              name: "userId",
+              title: "UserId",
+              type: "string",
+            },
+          ],
+        },
+      ],
     },
     {
       name: "comments",
       title: "Comments",
       type: "array",
-      of: [{ type: "comment" }],
+      of: [
+        {
+          name: "comment",
+          title: "Comment",
+          type: "document",
+          fields: [
+            {
+              name: "postedBy",
+              title: "PostedBy",
+              type: "postedBy",
+            },
+            {
+              name: "comment",
+              title: "Comment",
+              type: "string",
+            },
+            {
+              name: "key",
+              title: "Key",
+              type: "string",
+            },
+          ],
+        },
+      ],
     },
     {
       name: "like",
       title: "Like",
       type: "array",
-      of: [{ type: "like" }],
+      of: [
+        {
+          name: "like",
+          title: "Like",
+          type: "document",
+          fields: [
+            {
+              name: "postedBy",
+              title: "PostedBy",
+              type: "postedBy",
+            },
+            {
+              name: "userId",
+              title: "UserId",
+              type: "string",
+            },
+          ],
+        },
+      ],
     },
   ],
 };

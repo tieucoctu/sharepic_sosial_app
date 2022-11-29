@@ -167,22 +167,16 @@ const PinDetail = () => {
             <p className="mt-3 break-words">Mô tả: {pinDetail.about}</p>
             <p className="mt-3 break-words">
               Các thể loại:
-              {pinDetail?.category &&
-                pinDetail?.category.map((detail) =>
-                  // eslint-disable-next-line array-callback-return
-                  categories.map((ctg) => {
-                    if (ctg.value === detail)
-                      return (
-                        <Link
-                          className=" text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium"
-                          to={`/category/${detail}`}
-                        >
-                          {" "}
-                          {`${ctg.label} `}
-                        </Link>
-                      );
-                  })
-                )}
+              {pinDetail?.categories &&
+                pinDetail?.categories.map((detail) => (
+                  <Link
+                    className=" text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize font-medium"
+                    to={`/categories/${detail.value}`}
+                  >
+                    {" "}
+                    {`${detail.label} `}
+                  </Link>
+                ))}
             </p>
             <h2 className="mt-5 text-2xl">Bình luận: </h2>
             <div className="flex flex-wrap mt-6 gap-3">
