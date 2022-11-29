@@ -31,7 +31,11 @@ function Pins({ user }) {
           />
           <Route
             path="/create-pin"
-            element={<CreatePin user={user && user} />}
+            element={<CreatePin user={user && user} isAdd={true} />}
+          />
+          <Route
+            path="/pin-detail/edit/:pinId"
+            element={<CreatePin user={user && user} isAdd={false} />}
           />
           <Route
             path="/search"

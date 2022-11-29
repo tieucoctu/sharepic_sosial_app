@@ -55,7 +55,7 @@ function Like({ children, pinDetail }) {
     }
   };
   return (
-    <div>
+    <>
       <button
         type="button"
         onDoubleClick={(e) => {
@@ -72,7 +72,7 @@ function Like({ children, pinDetail }) {
         )}
         {children}
       </button>
-    </div>
+    </>
   );
 }
 

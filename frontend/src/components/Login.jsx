@@ -7,23 +7,16 @@ import { client } from "../client";
 import { gapi } from "gapi-script";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
-import { allUserQuery } from "../utils/data";
 export const clientId = process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN;
 
 function Login() {
   const navigate = useNavigate();
-  const [users, setUsers] = useState();
   useEffect(() => {
     gapi.load("client:auth2", () => {
       gapi.auth2.init({ clientId: clientId });
     });
   }, []);
-  useEffect(() => {
-    const query = allUserQuery();
-    client.fetch(query).then((data) => {
-      setUsers(data);
-    });
-  }, []);
+
   const responseGoogle = (response) => {
     localStorage.setItem("user", JSON.stringify(response?.profileObj));
     const { name, googleId, imageUrl, email } = response?.profileObj;

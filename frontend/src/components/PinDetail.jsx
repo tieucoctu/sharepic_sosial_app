@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MdDownloadForOffline } from "react-icons/md";
+import { MdDownloadForOffline, MdMoreVert } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
@@ -20,15 +20,21 @@ import RemoveCmt from "./RemoveCmt";
 import Like from "./Like";
 import { useDispatch, useSelector } from "react-redux";
 import { setUpdate } from "../app/constant/common";
-const PinDetail = ({ user }) => {
+import LinkClipbroad from "./LinkClipbroad";
+import Message from "./Message";
+const PinDetail = () => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
+  console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
-  const { update } = useSelector((state) => state.common);
+  const { update, user } = useSelector((state) => state.common);
+  // eslint-disable-next-line no-restricted-globals
+  const url_pinDetail = location.href;
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
     if (query) {
@@ -47,24 +53,33 @@ const PinDetail = ({ user }) => {
   const addComment = async () => {
     if (comment) {
       setAddingComment(true);
-      await client
-        .patch(pinId)
-        .setIfMissing({ comments: [] })
-        .insert("after", "comments[-1]", [
-          {
-            comment,
-            _key: uuidv4(),
-            key: uuidv4(),
-            postedBy: { _type: "postedBy", _ref: user._id },
-          },
-        ])
-        .commit()
-        .then(() => {
-          fetchPinDetails();
-          setComment("");
-          setAddingComment(false);
-          dispatch(setUpdate());
-        });
+      if (user.status) {
+        await client
+          .patch(pinId)
+          .setIfMissing({ comments: [] })
+          .insert("after", "comments[-1]", [
+            {
+              comment,
+              _key: uuidv4(),
+              key: uuidv4(),
+              postedBy: { _type: "postedBy", _ref: user._id },
+            },
+          ])
+          .commit()
+          .then(() => {
+            fetchPinDetails();
+            setComment("");
+            setAddingComment(false);
+            dispatch(setUpdate());
+          });
+      } else {
+        setError(true);
+        fetchPinDetails();
+        setComment("");
+        setAddingComment(false);
+        dispatch(setUpdate());
+        setTimeout(() => setError(false), 3000);
+      }
     }
   };
 
@@ -112,6 +127,10 @@ const PinDetail = ({ user }) => {
                   alt="user-post"
                 />
               </Like>
+              <LinkClipbroad
+                link={url_pinDetail}
+                className="absolute top-3 right-3 text-black opacity-70 hover:opacity-100  bg-white rounded-3xl  p-1 "
+              />
             </div>
             <span className="ml-3">
               {pinDetail?.like ? pinDetail?.like.length : 0} lượt thích
@@ -130,6 +149,13 @@ const PinDetail = ({ user }) => {
                 >
                   <MdDownloadForOffline className="w-7 h-7" />
                 </a>
+                {pinDetail.postedBy.email === user.email ? (
+                  <Link to={`/pin-detail/edit/${pinDetail._id}`}>
+                    <MdMoreVert className="w-7 h-7" />
+                  </Link>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <p className="font-bold mt-3">
@@ -215,6 +241,7 @@ const PinDetail = ({ user }) => {
                   </div>
                 );
               })}
+              {error && <Message message="Bạn bị chặn bình luận!" />}
             </div>
           </div>
         </div>

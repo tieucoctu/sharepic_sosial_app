@@ -1,25 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import Select from "react-select";
-import { allCategoriess } from "../utils/data";
+import { allCategoriess, categories, pinDetailQuery } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
 import { Controller, useForm } from "react-hook-form";
+import Message from "./Message";
 
-const CreatePin = ({ user }) => {
+const CreatePin = ({ user, isAdd }) => {
   const [loading, setLoading] = useState(false);
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
   const [allCategories, setAllCategories] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
+    resetField,
+    setValue,
+    getValues,
   } = useForm();
+  const [pinDetail, setPinDetail] = useState();
+  console.log("pinDetail :", pinDetail);
+  const { pinId } = useParams();
+  console.log("pinId :", pinId);
+  const fetchPinDetails = () => {
+    const query = pinDetailQuery(pinId);
+    if (query) {
+      client.fetch(`${query}`).then((data) => {
+        setPinDetail(data[0]);
+      });
+    }
+  };
+  useEffect(() => {
+    if (isAdd) {
+      resetField();
+    } else {
+      setValue("upload_image", pinDetail?.image?.asset?.url);
+      setValue("title", pinDetail?.title);
+      setValue("about", pinDetail?.about);
+      setValue("destination", pinDetail?.destination);
+      // eslint-disable-next-line array-callback-return
+      categories.map((category) => {
+        if (category.value === pinDetail?.category) {
+          setValue("categories", {
+            label: category.label,
+            value: pinDetail?.category,
+          });
+          console.log('setValue("categories" :', getValues("categories"));
+        }
+      });
+    }
+  }, [pinDetail, isAdd]);
+
+  useEffect(() => {
+    fetchPinDetails();
+  }, [pinId]);
   useEffect(() => {
     const query = allCategoriess();
 
@@ -58,7 +99,7 @@ const CreatePin = ({ user }) => {
   };
 
   const onSubmit = async (data) => {
-    if (imageAsset) {
+    if (imageAsset && user.status) {
       const { title, about, categories, destination } = data;
       let category = [];
       categories?.map((c) => category.push(c.value));
@@ -86,6 +127,9 @@ const CreatePin = ({ user }) => {
           navigate("/");
         });
       }
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
     }
   };
 
@@ -96,31 +140,42 @@ const CreatePin = ({ user }) => {
           <div className="bg-secondaryColor p-3 flex flex-0.7 w-full ">
             <div className=" flex justify-center  flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
               {loading && <Loading />}
-              {wrongImageType && <p>It&apos;s wrong file type.</p>}
+
               {!imageAsset ? (
                 <label>
                   <div className="flex flex-col items-center justify-center h-full">
-                    <div className="flex flex-col justify-center items-center">
-                      <p className="font-bold text-2xl">
+                    <div className="flex flex-col justify-center items-center relative">
+                      <p className="font-bold text-2xl z-50">
                         <AiOutlineCloudUpload />
                       </p>
-                      <p className="text-lg">Click to upload</p>
+                      <p className="text-lg z-50">Click to upload</p>
                     </div>
 
-                    <p className="mt-32 text-gray-400">
-                      Khuyến nghị: Sử dụng JPG, JPEG, SVG, PNG, GIF hoặc TIFF
-                      chất lượng dưới 20MB
-                    </p>
+                    {getValues("upload_image") ? (
+                      <img
+                        src={getValues("upload_image")}
+                        alt="pic"
+                        className="absolute"
+                      />
+                    ) : (
+                      <p className="mt-32 text-gray-400">
+                        Khuyến nghị: Sử dụng JPG, JPEG, SVG, PNG, GIF hoặc TIFF
+                        chất lượng dưới 20MB
+                      </p>
+                    )}
                   </div>
                   <input
                     type="file"
-                    name="upload_image"
+                    name="upload_image z-50"
                     {...register("upload_image")}
                     onChange={uploadImage}
                     className="w-0 h-0"
                   />
                   {errors?.upload_image && (
                     <p className="text-red-500">Vui lòng tải hình ảnh.</p>
+                  )}
+                  {wrongImageType && (
+                    <p>Vui lòng chọn đúng loại và kích thước!</p>
                   )}
                 </label>
               ) : (
@@ -146,6 +201,7 @@ const CreatePin = ({ user }) => {
           <div className="flex flex-1 flex-col gap-6 lg:pl-5 mt-5 w-full">
             <input
               type="text"
+              name="title"
               placeholder="Thêm tiêu đề"
               {...register("title", { required: true })}
               className="outline-none text-2xl sm:text-3xl font-bold border-b-2 border-gray-200 p-2"
@@ -187,7 +243,7 @@ const CreatePin = ({ user }) => {
             <div className="flex flex-col">
               <div>
                 <p className="mb-2 font-semibold text:lg sm:text-xl">
-                  Chọn danh mục ghim
+                  Chọn thể loại ảnh
                 </p>
                 {allCategories && (
                   <Controller
@@ -208,20 +264,21 @@ const CreatePin = ({ user }) => {
                 )}
               </div>
               {errors?.categories && (
-                <p className="text-red-500">Vui lòng chọn danh mục</p>
+                <p className="text-red-500">Vui lòng chọn thể loại</p>
               )}
               <div className="flex justify-end items-end mt-5">
                 <button
                   type="submit"
                   className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
                 >
-                  Lưu ghim
+                  Lưu ảnh
                 </button>
               </div>
             </div>
           </div>
         </div>
       </form>
+      {error && <Message message="Bạn đã bị chặn đăng ảnh!" />}
     </div>
   );
 };

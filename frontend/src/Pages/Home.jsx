@@ -10,11 +10,13 @@ import { useEffect } from "react";
 import { userQuery } from "../utils/data";
 import Pins from "./Pins";
 import { fetchUser } from "../components/fetchUser";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../app/constant/common";
 
 function Home() {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [user, setUser] = useState();
-  console.log("user :", user);
+  const { user } = useSelector((state) => state.common);
+  const dispatch = useDispatch();
   const scrollRef = useRef(null);
 
   const userInfo = fetchUser();
@@ -22,7 +24,7 @@ function Home() {
     const query = userQuery(userInfo?.googleId);
 
     client.fetch(query).then((data) => {
-      setUser(data[0]);
+      dispatch(setUser(data[0]));
     });
   }, []);
   useEffect(() => {
