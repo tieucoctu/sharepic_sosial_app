@@ -7,7 +7,8 @@ import { allCategoriess, pinDetailQuery } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
 import { Controller, useForm } from "react-hook-form";
-import Message from "./Message";
+import ErrorMessage from "./Message/ErrorMessage";
+import Success from "./Message/Success";
 
 const CreatePin = ({ user, isAdd }) => {
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,6 @@ const CreatePin = ({ user, isAdd }) => {
     getValues,
   } = useForm();
   const [pinDetail, setPinDetail] = useState();
-  console.log("pinDetail :", pinDetail);
   const { pinId } = useParams();
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
@@ -38,9 +38,13 @@ const CreatePin = ({ user, isAdd }) => {
   };
   useEffect(() => {
     if (isAdd) {
-      resetField();
+      resetField("upload_image");
+      resetField("title");
+      resetField("about");
+      resetField("destination");
+      resetField("categories");
     } else {
-      setValue("upload_image", pinDetail?.image);
+      setValue("upload_image", pinDetail?.image?.asset.url);
       setValue("title", pinDetail?.title);
       setValue("about", pinDetail?.about);
       setValue("destination", pinDetail?.destination);
@@ -50,7 +54,7 @@ const CreatePin = ({ user, isAdd }) => {
         const newCtg = { label: ctg?.label, value: ctg?.category };
         ctgs.push(newCtg);
       });
-      setValue("categories", ctgs);
+      setValue("categories", pinDetail?.categories);
     }
   }, [pinDetail, isAdd]);
 
@@ -67,7 +71,6 @@ const CreatePin = ({ user, isAdd }) => {
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
-    console.log("selectedFile :", selectedFile);
     if (
       selectedFile.type === "image/png" ||
       selectedFile.type === "image/svg" ||
@@ -94,17 +97,17 @@ const CreatePin = ({ user, isAdd }) => {
       setWrongImageType(true);
     }
   };
-  console.log(getValues("upload_image"));
   const onSubmit = async (data) => {
-    console.log("data :", data);
     const { title, about, categories, destination } = data;
-    let category = [];
-    // categories?.map((c) => {
-    //   const catgories ={value:c.value,label: c.label}
-    //   category.push(catgories)
-    // });
+    let ctgris = [];
+    categories?.map((category) => {
+      const { _id } = category;
+      const ctg = { ...category, _key: _id };
+      ctgris.push(ctg);
+    });
     if (imageAsset && user.status && isAdd) {
-      if (title && about && imageAsset?._id && categories) {
+      console.log("user.status  :", user.status);
+      if (title && about && imageAsset?._id && ctgris) {
         const doc = {
           _type: "pin",
           title,
@@ -112,6 +115,7 @@ const CreatePin = ({ user, isAdd }) => {
           destination,
           image: {
             _type: "image",
+            idImage: imageAsset?._id,
             asset: {
               _type: "reference",
               _ref: imageAsset?._id,
@@ -122,7 +126,7 @@ const CreatePin = ({ user, isAdd }) => {
             _type: "postedBy",
             _ref: user._id,
           },
-          categories,
+          categories: ctgris,
         };
         await client.create(doc).then(() => {
           navigate("/");
@@ -134,23 +138,31 @@ const CreatePin = ({ user, isAdd }) => {
         .set({
           title: title,
           about: about,
-          categories: categories,
-          destination: destination,
+          categories: ctgris,
+          destination: destination ? destination : "",
           image: {
             _type: "image",
+            idImage: imageAsset?._id
+              ? imageAsset?._id
+              : pinDetail?.image?.idImage,
             asset: {
               _type: "reference",
-              _ref: imageAsset?._id,
+              _ref: imageAsset?._id
+                ? imageAsset?._id
+                : pinDetail?.image?.idImage,
             },
           },
         })
         .commit()
         .then((result) => {
-          console.log("result :", result);
+          navigate("/");
         });
     } else {
+      console.log("user.status :", error);
       setError(true);
-      setTimeout(() => setError(false), 2000);
+      setTimeout(() => {
+        setError(false);
+      }, 3000);
     }
   };
 
@@ -161,8 +173,23 @@ const CreatePin = ({ user, isAdd }) => {
           <div className="bg-secondaryColor p-3 flex flex-0.7 w-full ">
             <div className=" flex justify-center  flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
               {loading && <Loading />}
+              {imageAsset || pinDetail?.image?.asset.url ? (
+                <div className="relative h-full">
+                  <img
+                    src={imageAsset?.url || getValues("upload_image")}
+                    alt="uploaded-pic"
+                    className="h-full w-full object-contain"
+                  />
 
-              {!imageAsset ? (
+                  <button
+                    type="button"
+                    className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+                    onClick={() => setImageAsset(null)}
+                  >
+                    <MdDelete />
+                  </button>
+                </div>
+              ) : (
                 <label>
                   <div className="flex flex-col items-center justify-center h-full">
                     <div className="flex flex-col justify-center items-center relative">
@@ -171,19 +198,10 @@ const CreatePin = ({ user, isAdd }) => {
                       </p>
                       <p className="text-lg z-50">Click to upload</p>
                     </div>
-
-                    {!isAdd ? (
-                      <img
-                        src={getValues("upload_image")}
-                        alt="pic"
-                        className="absolute object-cover p-8  lg:w-[430px] 2xl:w-[550px]"
-                      />
-                    ) : (
-                      <p className="mt-32 text-gray-400">
-                        Khuyến nghị: Sử dụng JPG, JPEG, SVG, PNG, GIF hoặc TIFF
-                        chất lượng dưới 20MB
-                      </p>
-                    )}
+                    <p className="mt-32 text-gray-400">
+                      Khuyến nghị: Sử dụng JPG, JPEG, SVG, PNG, GIF hoặc TIFF
+                      chất lượng dưới 20MB
+                    </p>
                   </div>
                   <input
                     type="file"
@@ -199,22 +217,6 @@ const CreatePin = ({ user, isAdd }) => {
                     <p>Vui lòng chọn đúng loại và kích thước!</p>
                   )}
                 </label>
-              ) : (
-                <div className="relative h-full">
-                  <img
-                    src={imageAsset?.url}
-                    alt="uploaded-pic"
-                    className="h-full w-full object-contain"
-                  />
-
-                  <button
-                    type="button"
-                    className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                    onClick={() => setImageAsset(null)}
-                  >
-                    <MdDelete />
-                  </button>
-                </div>
               )}
             </div>
           </div>
@@ -300,7 +302,11 @@ const CreatePin = ({ user, isAdd }) => {
           </div>
         </div>
       </form>
-      {error && <Message message="Bạn đã bị chặn đăng ảnh!" />}
+      <ErrorMessage
+        message="Bạn đã bị chặn đăng ảnh!"
+        error={error}
+        setError={setError}
+      />
     </div>
   );
 };

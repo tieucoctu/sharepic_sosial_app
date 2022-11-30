@@ -21,7 +21,7 @@ import Like from "./Like";
 import { useDispatch, useSelector } from "react-redux";
 import { setUpdate } from "../app/constant/common";
 import LinkClipbroad from "./LinkClipbroad";
-import Message from "./Message";
+import Message from "./Message/ErrorMessage";
 const PinDetail = () => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
