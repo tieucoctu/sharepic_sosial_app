@@ -241,7 +241,7 @@ const CreatePin = ({ user, isAdd }) => {
             {user && (
               <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
                 <img
-                  src={user.image}
+                  src={user.image || getValues("upload_image")}
                   className="w-10 h-10 rounded-full"
                   alt="user-profile"
                 />
