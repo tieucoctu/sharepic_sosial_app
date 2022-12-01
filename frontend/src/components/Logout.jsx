@@ -13,7 +13,7 @@ function Logout({ userId, User, className }) {
   return (
     <div className={className}>
       <div className=" z-1 right-2 top-2 p-2">
-        {userId === User.googleId && (
+        {userId === User?.googleId && (
           <GoogleLogout
             clientId={`${process.env.REACT_APP_PUBLIC_GOOGLE_API_TOKEN}`}
             render={(renderProps) => (

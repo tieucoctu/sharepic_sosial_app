@@ -2,14 +2,9 @@ import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline, MdMoreVert } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-
 import { client, urlFor } from "../client";
 import MasonryLayout from "./MasonryLayout";
-import {
-  categories,
-  pinDetailMorePinQuery,
-  pinDetailQuery,
-} from "../utils/data";
+import { pinDetailMorePinQuery, pinDetailQuery } from "../utils/data";
 import Loading from "./Loading";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -19,18 +14,16 @@ import { AiOutlineFullscreen } from "react-icons/ai";
 import RemoveCmt from "./RemoveCmt";
 import Like from "./Like";
 import { useDispatch, useSelector } from "react-redux";
-import { setUpdate } from "../app/constant/common";
+import { setState, setUpdate } from "../app/constant/common";
 import LinkClipbroad from "./LinkClipbroad";
-import Message from "./Message/ErrorMessage";
+import Message from "./Message/Message";
 const PinDetail = () => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
   const [pinDetail, setPinDetail] = useState();
-  console.log("pinDetail :", pinDetail);
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState(false);
   const dispatch = useDispatch();
   const { update, user } = useSelector((state) => state.common);
   // eslint-disable-next-line no-restricted-globals
@@ -73,12 +66,11 @@ const PinDetail = () => {
             dispatch(setUpdate());
           });
       } else {
-        setError(true);
+        dispatch(setState("error"));
         fetchPinDetails();
         setComment("");
         setAddingComment(false);
         dispatch(setUpdate());
-        setTimeout(() => setError(false), 3000);
       }
     }
   };
@@ -235,7 +227,7 @@ const PinDetail = () => {
                   </div>
                 );
               })}
-              {error && <Message message="Bạn bị chặn bình luận!" />}
+              <Message message="Bạn bị chặn bình luận!" />
             </div>
           </div>
         </div>

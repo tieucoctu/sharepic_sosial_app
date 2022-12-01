@@ -7,15 +7,18 @@ import { allCategoriess, pinDetailQuery } from "../utils/data";
 import { client } from "../client";
 import Loading from "./Loading";
 import { Controller, useForm } from "react-hook-form";
-import ErrorMessage from "./Message/ErrorMessage";
-import Success from "./Message/Success";
+import Message from "./Message/Message";
+import { useDispatch, useSelector } from "react-redux";
+import { setState } from "../app/constant/common";
 
 const CreatePin = ({ user, isAdd }) => {
   const [loading, setLoading] = useState(false);
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
   const [allCategories, setAllCategories] = useState("");
-  const [error, setError] = useState(false);
+  const { state } = useSelector((state) => state.common);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -49,11 +52,11 @@ const CreatePin = ({ user, isAdd }) => {
       setValue("about", pinDetail?.about);
       setValue("destination", pinDetail?.destination);
       // eslint-disable-next-line array-callback-return
-      const ctgs = [];
-      pinDetail?.categories?.map((ctg) => {
-        const newCtg = { label: ctg?.label, value: ctg?.category };
-        ctgs.push(newCtg);
-      });
+      // const ctgs = [];
+      // pinDetail?.categories?.map((ctg) => {
+      //   const newCtg = { label: ctg?.label, value: ctg?.category };
+      //   ctgs.push(newCtg);
+      // });
       setValue("categories", pinDetail?.categories);
     }
   }, [pinDetail, isAdd]);
@@ -106,7 +109,6 @@ const CreatePin = ({ user, isAdd }) => {
       ctgris.push(ctg);
     });
     if (imageAsset && user.status && isAdd) {
-      console.log("user.status  :", user.status);
       if (title && about && imageAsset?._id && ctgris) {
         const doc = {
           _type: "pin",
@@ -129,7 +131,10 @@ const CreatePin = ({ user, isAdd }) => {
           categories: ctgris,
         };
         await client.create(doc).then(() => {
-          navigate("/");
+          dispatch(setState("success"));
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
         });
       }
     } else if (user.status) {
@@ -154,15 +159,14 @@ const CreatePin = ({ user, isAdd }) => {
           },
         })
         .commit()
-        .then((result) => {
-          navigate("/");
+        .then(() => {
+          dispatch(setState("success"));
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
         });
     } else {
-      console.log("user.status :", error);
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 3000);
+      dispatch(setState("error"));
     }
   };
 
@@ -302,10 +306,12 @@ const CreatePin = ({ user, isAdd }) => {
           </div>
         </div>
       </form>
-      <ErrorMessage
-        message="Bạn đã bị chặn đăng ảnh!"
-        error={error}
-        setError={setError}
+      <Message
+        message={
+          state === "error"
+            ? "Bạn đã bị chặn đăng ảnh!"
+            : "Đăng ảnh thành công !"
+        }
       />
     </div>
   );

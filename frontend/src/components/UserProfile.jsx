@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useRef, useState } from "react";
 import { AiTwotoneEdit } from "react-icons/ai";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   userCreatedPinsQuery,
   userQuery,

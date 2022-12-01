@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiLink } from "react-icons/hi";
-import Message from "./Message/ErrorMessage";
+import Message from "./Message/Message";
 
 function LinkClipbroad({ link, className }) {
   const [copySuccess, setCopySuccess] = useState(false);
