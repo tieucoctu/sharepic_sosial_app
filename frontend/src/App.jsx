@@ -12,7 +12,6 @@ function App() {
         ? JSON.parse(localStorage.getItem("user"))
         : localStorage.clear();
 
-    console.log("User :", User);
     if (!User) navigate("/login");
   }, []);
 

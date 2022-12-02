@@ -31,7 +31,7 @@ function Sidebar({ closeToggle }) {
           <div className="mx-4 ml-6 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 overflow-y-scroll scrollbar-rounded-full scrollbar-rounded-full md:max-h-[700px] max-h-[450px]">
             {categories.map((category) => (
               <NavLink
-                to={`/category/${category.value}`}
+                to={`/category/${category.label}`}
                 className={({ isActive }) =>
                   isActive ? isActiveStyle : isNotActiveStyle
                 }
